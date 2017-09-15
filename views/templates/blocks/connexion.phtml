@@ -1,0 +1,28 @@
+<?php
+if (AUTH) {
+    if (isset($_SESSION['auth']->statut) && $_SESSION['auth']->statut === 1) {
+        $user = $_SESSION['auth'];
+
+        ?>
+        <div class="connexion">
+            <span class="volet"></span>
+            <div class="connexion-input-block connected">
+                Connecté en tant que<br/> <?= Itval\core\Classes\Session::read('auth')->username; ?><br/>
+                <a class="btn btn-primary profil" href="<?= getUrl('profil'); ?>">Accéder à votre profil</a><br/>
+                <a class="btn btn-danger deconnexion" href="<?= getUrl('logout'); ?>">Déconnexion</a>
+            </div>
+        </div>
+        <?php
+    } else {
+
+        ?>
+        <div class="connexion">
+            <span class="volet"></span>
+            <div class="connexion-input-block">
+                <a class="btn btn-success seconnecter" href="<?= getUrl('auth'); ?>">Se connecter</a><br/>
+                <a class="btn btn-primary inscription" href="<?= getUrl('registration'); ?>">Enregistrer un compte</a>
+            </div>
+        </div>
+        <?php
+    }
+}

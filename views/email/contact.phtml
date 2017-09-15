@@ -1,0 +1,17 @@
+<div>
+    <p>
+        Catégorie : <?= $values['categorie']; ?>
+    </p>
+    <p>
+        Message envoyé depuis la page de contact de <?= SITE_NAME; ?>
+    </p>
+    <p>
+        De la part de : <?= $values['nom'] . ' ' . $values['prenom']; ?>
+    </p>
+    <p>
+        Email renseigné : <a href="mailto:<?= $values['email']; ?>"><?= $values['email']; ?></a>
+    </p>
+    <p>
+        Message : <br/><?= $values['message']; ?>
+    </p>
+</div>

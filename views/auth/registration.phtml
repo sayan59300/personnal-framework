@@ -1,0 +1,13 @@
+<h1>Inscription</h1>
+<hr>
+<?= printSession('wrongValues'); ?>
+<div class="row">
+    <div class="col-md-12">
+        <form name="<?= $registrationForm->name; ?>" method="<?= $registrationForm->method; ?>"
+              action="<?= $registrationForm->action; ?>">
+            <?php foreach ($registrationForm->elements as $element): ?>
+                <?= $element; ?>
+            <?php endforeach; ?>
+        </form>
+    </div>
+</div>

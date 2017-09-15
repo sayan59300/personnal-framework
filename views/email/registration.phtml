@@ -1,0 +1,15 @@
+<div>Bienvenue sur le site <?= SITE_NAME; ?><br/>
+    <p>
+        Votre inscription a été prise en compte, veuillez confirmer votre inscription en cliquant sur le lien ci-dessous
+    </p>
+    <p>
+        <a href="<?= getUrl('confirmation') . '/?username=' . $values['username'] . '&token=' . $values['confirmation_token']; ?>">lien
+            de confirmation</a>
+    </p>
+    <p>
+        Cordialement L'équipe du site <?= SITE_NAME; ?>
+    </p>
+    <p>
+        <a href="<?= BASE_URL; ?>"><?= SITE_NAME . ' ' . SLOGAN; ?></a>
+    </p>
+</div>

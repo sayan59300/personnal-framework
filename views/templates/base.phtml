@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<!-- Header -->
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <?php require 'blocks' . DS . 'head.phtml'; ?>
+    <link href="https://fonts.googleapis.com/css?family=Faster+One|Noto+Sans|Quattrocento" rel="stylesheet">
+    <title><?= $title ?? TITLE; ?></title>
+</head>
+<!-- Fin header -->
+<body>
+<div class="container-fluid">
+    <header>
+        <!-- Navbar -->
+        <?php require 'blocks' . DS . 'navbar.phtml'; ?>
+        <!-- Fin navbar -->
+        <!-- Connexion -->
+        <?php require 'blocks' . DS . 'connexion.phtml'; ?>
+        <!-- Fin connexion -->
+    </header>
+    <section>
+        <div class="row">
+            <!-- Corps de page -->
+            <div class="col-md-8 col-md-offset-2 corps">
+                <?php require 'blocks' . DS . 'messages.phtml'; ?>
+                <?= $contentForBody; ?>
+            </div>
+            <!-- Fin corps de page -->
+        </div>
+    </section>
+    <footer>
+        <!-- Pied de page -->
+        <?php require 'blocks' . DS . 'footer.phtml'; ?>
+        <!-- Fin pied de page -->
+    </footer>
+</div>
+<?php require 'blocks' . DS . 'scripts.phtml'; ?>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<div>
+    <h1>Formulaire de contact</h1>
+    <hr/>
+    <div class="row">
+        <div class="col-md-12">
+            <form name="<?= $contactForm->name; ?>" method="<?= $contactForm->method; ?>"
+                  action="<?= $contactForm->action; ?>">
+                <h4>Catégorie concernée par le message</h4>
+                <select class="form-control" name="categorie">
+                    <option value="Défaut" <?= (printSession('categorie') === 'Défaut') ? 'selected ' : ''; ?>>
+                        Sélectionnez une catégorie (facultatif)
+                    </option>
+                    <option value="Inscription" <?= (printSession('categorie') === 'Inscription') ? 'selected ' : ''; ?>>
+                        Inscription
+                    </option>
+                    <option value="Compte utilisateur" <?= (printSession('categorie') === 'Compte utilisateur') ? 'selected ' : ''; ?>>
+                        Compte utilisateur
+                    </option>
+                    <option value="Site" <?= (printSession('categorie') === 'Site') ? 'selected ' : ''; ?>>Utilisation
+                        du site
+                    </option>
+                    <option value="Information" <?= (printSession('categorie') === 'Information') ? 'selected ' : ''; ?>>
+                        Demande d'information
+                    </option>
+                    <option value="Divers" <?= (printSession('categorie') === 'Divers') ? 'selected ' : ''; ?>>Divers
+                    </option>
+                </select>
+                <br/>
+                <?php foreach ($contactForm->elements as $element): ?>
+                    <?= $element; ?>
+                <?php endforeach; ?>
+            </form>
+        </div>
+    </div>
+</div>
