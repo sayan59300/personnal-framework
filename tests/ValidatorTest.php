@@ -72,6 +72,8 @@ class ValidatorTest extends TestCase
         $response6 = Validator::isValidString(SLUG, '23-slug-de-test');
         $response7 = Validator::isValidString(SLUG, '23');
         $response8 = Validator::isValidString(SLUG, 'test23-slug-de-test');
+        $response9 = Validator::isValidString(SLUG, 'slug-de-test-');
+        $response10 = Validator::isValidString(SLUG, 'slug');
         $this->assertEquals('slug-de-test', $response);
         $this->assertEquals('slug-de-test-2', $response2);
         $this->assertEquals('slug-2-test', $response3);
@@ -80,6 +82,8 @@ class ValidatorTest extends TestCase
         $this->assertEquals(false, $response6);
         $this->assertEquals(false, $response7);
         $this->assertEquals(false, $response8);
+        $this->assertEquals(false, $response9);
+        $this->assertEquals('slug', $response10);
     }
 
     public function testValidStringUsername()
