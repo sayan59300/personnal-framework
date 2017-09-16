@@ -90,7 +90,7 @@ class UsersModelTest extends TestCase
         $model = new UsersModel(self::$pdo);
         $this->insertUsers($model, 20);
         $res = $model->findLast(10);
-        $this->assertEquals(10, count($res));
+        $this->assertCount(10, $res);
     }
 
     public function testFindFirstWithoutNumber()
@@ -105,14 +105,14 @@ class UsersModelTest extends TestCase
         $model = new UsersModel(self::$pdo);
         $this->insertUsers($model, 20);
         $res = $model->findFirst(10);
-        $this->assertEquals(10, count($res));
+        $this->assertCount(10, $res);
     }
 
     public function testFindWithFalseConditions()
     {
         $model = new UsersModel(self::$pdo);
         $res = $model->find(['conditions' => 'id = 1000000']);
-        $this->assertEquals([], $res);
+        $this->assertCount(0, $res);
     }
 
     public function testFindWithCorrectConditions()

@@ -62,6 +62,62 @@ class ValidatorTest extends TestCase
         $this->assertEquals(false, $response);
     }
 
+    public function testIsValidStringSlug()
+    {
+        $response = Validator::isValidString(SLUG, 'slug-de-test');
+        $response2 = Validator::isValidString(SLUG, 'slug-de-test-2');
+        $response3 = Validator::isValidString(SLUG, 'slug-2-test');
+        $response4 = Validator::isValidString(SLUG, 'slug--de-test');
+        $response5 = Validator::isValidString(SLUG, '--slug--de-test');
+        $response6 = Validator::isValidString(SLUG, '23-slug-de-test');
+        $response7 = Validator::isValidString(SLUG, '23');
+        $response8 = Validator::isValidString(SLUG, 'test23-slug-de-test');
+        $this->assertEquals('slug-de-test', $response);
+        $this->assertEquals('slug-de-test-2', $response2);
+        $this->assertEquals('slug-2-test', $response3);
+        $this->assertEquals(false, $response4);
+        $this->assertEquals(false, $response5);
+        $this->assertEquals(false, $response6);
+        $this->assertEquals(false, $response7);
+        $this->assertEquals(false, $response8);
+    }
+
+    public function testValidStringUsername()
+    {
+        $response = Validator::isValidString(USERNAME, 'username123');
+        $response2 = Validator::isValidString(USERNAME, 'user123name123');
+        $response3 = Validator::isValidString(USERNAME, 'usern-ame123');
+        $response4 = Validator::isValidString(USERNAME, '123username123');
+        $response5 = Validator::isValidString(USERNAME, '123user name123');
+        $this->assertEquals('username123', $response);
+        $this->assertEquals('user123name123', $response2);
+        $this->assertEquals(false, $response3);
+        $this->assertEquals('123username123', $response4);
+        $this->assertEquals(false, $response5);
+    }
+
+    public function testValidStringPassword()
+    {
+        $response = Validator::isValidString(PASSWORD, 'password132');
+        $response2 = Validator::isValidString(PASSWORD, 'PassWord132Zool234');
+        $response3 = Validator::isValidString(PASSWORD, 'usern-ame123');
+        $response4 = Validator::isValidString(PASSWORD, 'usern_ame123');
+        $response5 = Validator::isValidString(PASSWORD, '123userna/me123');
+        $response6 = Validator::isValidString(PASSWORD, '123user name123');
+        $response7 = Validator::isValidString(PASSWORD, '123user.name123');
+        $response8 = Validator::isValidString(PASSWORD, '123usernam!e123');
+        $response9 = Validator::isValidString(PASSWORD, 'usern_am-e123');
+        $this->assertEquals('password132', $response);
+        $this->assertEquals('PassWord132Zool234', $response2);
+        $this->assertEquals('usern-ame123', $response3);
+        $this->assertEquals('usern_ame123', $response4);
+        $this->assertEquals(false, $response5);
+        $this->assertEquals(false, $response6);
+        $this->assertEquals(false, $response7);
+        $this->assertEquals(false, $response8);
+        $this->assertEquals('usern_am-e123', $response9);
+    }
+
     public function testIsValidStringPhoneNumberWithCorrectValue()
     {
         $response1 = Validator::isValidString(PHONE_NUMBER, '0107192836');

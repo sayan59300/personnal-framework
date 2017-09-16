@@ -41,7 +41,7 @@ class BaseController extends Controller
         }
         $posted = $this->getPost();
         $values = [
-            'categorie' => $posted['categorie'],
+            'categorie' => htmlentities($posted['categorie']),
             'nom' => Validator::isValidString(ALPHABETIC, $posted['nom']),
             'prenom' => Validator::isValidString(ALPHABETIC, $posted['prenom']),
             'email' => Validator::isValidEmail($posted['email']),
