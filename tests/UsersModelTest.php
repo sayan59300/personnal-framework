@@ -82,7 +82,7 @@ class UsersModelTest extends TestCase
     {
         $model = new UsersModel(self::$pdo);
         $res = $model->findLast();
-        $this->assertEquals(1, count($res));
+        $this->assertCount(1, $res);
     }
 
     public function testFindLastWithNumber()
@@ -97,7 +97,7 @@ class UsersModelTest extends TestCase
     {
         $model = new UsersModel(self::$pdo);
         $res = $model->findFirst();
-        $this->assertEquals(1, count($res));
+        $this->assertCount(1, $res);
     }
 
     public function testFindFirstWithNumber()
