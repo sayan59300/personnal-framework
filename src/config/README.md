@@ -23,7 +23,7 @@
 ### Swiftmailer ###
 ```PHP
     define('HOST_MAIL', 'adresse smtp');
-    define('HOST_MAIL_PORT', port du server, 25 par defaut);
+    define('HOST_MAIL_PORT', port du server - 25 par defaut);
     define('HOST_MAIL_USERNAME', 'nom d\'utilisateur');
     define('HOST_MAIL_PASSWORD', 'mot de passe');
     define('HOST_MAIL_SECURITY', 'sécurité du serveur, SSL ou autre');
