@@ -13,18 +13,18 @@
 ### Configuration du site ###
 ```PHP
     define('WEBMASTER_MAIL', 'optionnel');
-    define('SITE_CONTACT_MAIL', email de contact);
+    define('SITE_CONTACT_MAIL', 'email de contact');
     define('SITE_NAME', 'Nom du site affiché sur le template');
     define('SLOGAN', 'Ici le slogan si nécessaire');
-    define('TITLE', 'Titre affiché sur l'onglet du navigateur à la page d'accueil');
-    define('VERSION', 'dev pour l'affichage des erreurs php, prod pour la production et tout autre valeur requise dans le code');
+    define('TITLE', 'Titre affiché sur l\'onglet du navigateur à la page d\'accueil');
+    define('VERSION', 'dev pour l\'affichage des erreurs php, prod pour la production et tout autre valeur requise dans le code');
 ```
 
 ### Swiftmailer ###
 ```PHP
     define('HOST_MAIL', 'adresse smtp');
     define('HOST_MAIL_PORT', port du server, 25 par defaut);
-    define('HOST_MAIL_USERNAME', 'nom d'utilisateur');
+    define('HOST_MAIL_USERNAME', 'nom d\'utilisateur');
     define('HOST_MAIL_PASSWORD', 'mot de passe');
     define('HOST_MAIL_SECURITY', 'sécurité du serveur, SSL ou autre');
 ```
