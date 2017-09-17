@@ -35,8 +35,14 @@ nbdist/
 
 ### Composer ###
 vendor/
-tmp/cache/
 composer.lock
+
+### configuration ###
+src/config/config.php
+phinx.yml
+
+### cache ###
+tmp/cache/
 
 ### Logs ###
 logs/
