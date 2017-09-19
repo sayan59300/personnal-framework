@@ -14,7 +14,7 @@ class BaseController extends Controller
 {
 
     /**
-     * rRend la vue index
+     * Rend la vue index
      */
     public function index()
     {
