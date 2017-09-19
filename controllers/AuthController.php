@@ -29,11 +29,11 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
-        if (!isset($posted['connexion']) && !Validator::isAuthenticated()) {
+        if (!isset($posted['connexion']) && !isAuthenticated()) {
             $this->setToken();
             return $this->render('index');
         }
-        if (Validator::isAuthenticated()) {
+        if (isAuthenticated()) {
             error('Vous êtes déja connecté');
             return redirect('/profil');
         }
@@ -51,7 +51,7 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
-        if (!Validator::isValidToken()) {
+        if (!isValidToken()) {
             $this->emitter->emit('token.rejected');
             error('Token invalide');
             return redirect();
@@ -61,7 +61,8 @@ class AuthController extends Controller
         $user = new UsersModel;
         $result = $user->find(
             ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at'],
-                'conditions' => "username = '$username' AND password = '$password'"]
+                'conditions' => "username = :username AND password = :password"],
+            [':username' => $username, ':password' => $password]
         );
         $this->responseValidation(current($result));
     }
@@ -115,7 +116,7 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
-        if (Validator::isAuthenticated()) {
+        if (isAuthenticated()) {
             error('Vous êtes déjà connecté, veuillez vous déconnecter pour faire une nouvelle inscription sur le site');
             return redirect();
         }
@@ -169,7 +170,7 @@ class AuthController extends Controller
             if (!AUTH) {
                 return error404();
             }
-            if (!Validator::isAuthenticated()) {
+            if (!isAuthenticated()) {
                 LoggerFactory::getInstance('security')->addWarning(
                     'Tentative d\'accès à la page '
                     . 'profil'
@@ -223,7 +224,7 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
-        if (!Validator::isValidToken()) {
+        if (!isValidToken()) {
             $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
             error('Token invalide');
             return redirect('/profil');
@@ -231,18 +232,25 @@ class AuthController extends Controller
         $posted = $this->getPost();
         $values = [
             'profil' => true,
-            'id' => Validator::isValidInt($posted['id']),
-            'nom' => Validator::isValidString(ALPHABETIC, $posted['nom']),
-            'prenom' => Validator::isValidString(ALPHABETIC, $posted['prenom']),
-            'email' => Validator::isValidEmail($posted['email']),
-            'username' => Validator::isValidString(USERNAME, $posted['username'])
+            'id' => intval($posted['id']),
+            'nom' => $posted['nom'],
+            'prenom' => $posted['prenom'],
+            'email' => $posted['email'],
+            'username' => $posted['username'],
+            'password' => $posted['password'] ?? '',
+            'confirm_password' => $posted['confirm_password'] ?? ''
         ];
+        $validator = new Validator($values);
+        $validator->isValidInt('id');
+        $validator->isValidString('nom', ALPHABETIC, true);
+        $validator->isValidString('prenom', ALPHABETIC, true);
+        $validator->isValidEmail('email', true);
+        $validator->isValidString('username', USERNAME, true);
+        $validator->isAvailable(UsersModel::class, 'username');
         if ($posted['password'] !== '') {
-            $values['password'] = Validator::isValidString(PASSWORD, $posted['password']);
-            $values['confirm_password'] = Validator::isValidString(PASSWORD, $posted['confirm_password']);
+            $validator->isValidString('password', PASSWORD, false, 'confirm_password');
         }
-        $control = $this->registrationValidation($values);
-        if (!is_array($control)) {
+        if (count($validator->getErrors()) === 0) {
             $user = new UsersModel;
             $user->id = $values['id'];
             $user->nom = $values['nom'];
@@ -255,7 +263,7 @@ class AuthController extends Controller
             success('Votre profil a été mis à jour avec succès');
             return redirect('/profil');
         }
-        error($this->formattedErrors($control));
+        error($this->formattedErrors($validator->getErrors()));
         return redirect('/profil');
     }
 
@@ -304,23 +312,29 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
-        if (!Validator::isValidToken()) {
+        if (!isValidToken()) {
             $this->emitter->emit('token.rejected');
             error('Token invalide');
             return redirect();
         }
         $posted = $this->getPost();
         $values = [
-            'nom' => Validator::isValidString(ALPHABETIC, $posted['nom']),
-            'prenom' => Validator::isValidString(ALPHABETIC, $posted['prenom']),
-            'email' => Validator::isValidEmail($posted['email']),
-            'confirm_email' => Validator::isValidEmail($posted['email']),
-            'username' => Validator::isValidString(USERNAME, $posted['username']),
-            'password' => Validator::isValidString(PASSWORD, $posted['password']),
-            'confirm_password' => Validator::isValidString(PASSWORD, $posted['confirm_password'])
+            'nom' => $posted['nom'],
+            'prenom' => $posted['prenom'],
+            'email' => $posted['email'],
+            'confirm_email' => $posted['confirm_email'],
+            'username' => $posted['username'],
+            'password' => $posted['password'],
+            'confirm_password' => $posted['confirm_password']
         ];
-        $control = $this->registrationValidation($values);
-        if (!is_array($control)) {
+        $validator = new Validator($values);
+        $validator->isValidString('nom', ALPHABETIC, true);
+        $validator->isValidString('prenom', ALPHABETIC, true);
+        $validator->isValidEmail('email', true, 'confirm_email');
+        $validator->isValidString('username', USERNAME, true);
+        $validator->isAvailable(UsersModel::class, 'username');
+        $validator->isValidString('password', PASSWORD, true, 'confirm_password');
+        if (count($validator->getErrors()) === 0) {
             $this->resetValuesSession($values);
             $user = new UsersModel;
             $user->nom = $values['nom'];
@@ -335,7 +349,7 @@ class AuthController extends Controller
             return true;
         }
         $this->setValuesSession($values);
-        error($this->formattedErrors($control));
+        error($this->formattedErrors($validator->getErrors()));
         return redirect('/registration');
     }
 }

@@ -81,8 +81,11 @@ class UsersModelTest extends TestCase
     public function testFindLastWithoutNumber()
     {
         $model = new UsersModel(self::$pdo);
+        $req = self::$pdo->query('SELECT MAX(id) FROM users;');
+        $lastId = $req->fetch();
         $res = $model->findLast();
         $this->assertCount(1, $res);
+        $this->assertEquals(current($lastId), current($res)->id);
     }
 
     public function testFindLastWithNumber()
@@ -96,8 +99,11 @@ class UsersModelTest extends TestCase
     public function testFindFirstWithoutNumber()
     {
         $model = new UsersModel(self::$pdo);
+        $req = self::$pdo->query('SELECT MIN(id) FROM users;');
+        $minId = $req->fetch();
         $res = $model->findFirst();
         $this->assertCount(1, $res);
+        $this->assertEquals(current($minId), current($res)->id);
     }
 
     public function testFindFirstWithNumber()
@@ -134,12 +140,26 @@ class UsersModelTest extends TestCase
     {
         $model = new UsersModel(self::$pdo);
         /** @var UsersModel $user */
-        $user = current($model->find(['conditions' => "username = 'gwashington'"]));
+        $user = current($model->find(['conditions' => "username = :username"], ['username' => 'gwashington']));
+        $id = $user->id;
         $user->prenom = 'John';
         $user->email = 'john.washington@usa.fr';
         $user->update();
-        $this->assertEquals('John', $user->prenom);
-        $this->assertEquals('john.washington@usa.fr', $user->email);
+        $user2 = $model->find(['conditions' => "id = :id"], ['id' => $id]);
+        $this->assertEquals('John', current($user2)->prenom);
+        $this->assertEquals('john.washington@usa.fr', current($user2)->email);
+    }
+
+    public function testProfilUpdate()
+    {
+        $model = new UsersModel(self::$pdo);
+        /** @var UsersModel $user */
+        $user = current($model->find(['conditions' => "username = :username"], ['username' => 'gwashington']));
+        $id = $user->id;
+        $user->password = encrypted('nouveaumotdepasse');
+        $user->profilUpdate();
+        $user2 = $model->find(['conditions' => "id = :id"], ['id' => $id]);
+        $this->assertEquals(encrypted('nouveaumotdepasse'), current($user2)->password);
     }
 
     public function testDelete()

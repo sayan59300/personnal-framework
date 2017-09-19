@@ -39,17 +39,22 @@ class Tables implements \ArrayAccess
      *
      * @param  array $args fields = string contenant les noms des colonnes séparés par des virgules / values = string
      * contenant les valeurs a donner aux colonnes séparées par des virgules
+     * @param array $values
      * @return int
      */
-    public function add(array $args): int
+    public function add(array $args, array $values = []): int
     {
+        $fields = implode(',', $args['fields']);
+        $names = implode(',', $this->getValuesNames($args['fields']));
+        $values = array_merge(['id' => null], $values);
         try {
             $table = $this->getTable(get_class($this));
-            $requete = $this->pdo->query(
+            $requete = $this->pdo->prepare(
                 'INSERT INTO ' . $table
-                . ' (id,' . $args['fields'] . ') '
-                . 'VALUES (NULL,' . $args['values'] . ')'
+                . ' (id,' . $fields . ') '
+                . 'VALUES (' . $names . ');'
             );
+            $requete->execute($values);
             if ($requete->rowCount() != 0) {
                 return 1;
             } else {
@@ -58,6 +63,15 @@ class Tables implements \ArrayAccess
         } catch (\PDOException $e) {
             $this->catchReturn($e);
         }
+    }
+
+    private function getValuesNames(array $fields)
+    {
+        $names = [":id"];
+        foreach ($fields as $key) {
+            array_push($names, ":$key");
+        }
+        return $names;
     }
 
     /**
@@ -91,18 +105,20 @@ class Tables implements \ArrayAccess
      *
      * @param  array $args / fields = array contenant les noms des colonnes avec leurs nouvelles valeurs / conditions =
      * string contenant les conditions qui seront misent dans le WHERE
+     * @param array $values
      * @return int
      */
-    public function amend(array $args): int
+    public function amend(array $args, array $values = []): int
     {
         try {
             $table = $this->getTable(get_class($this));
             $formattedArgs = $this->formatArgs($args);
-            $requete = $this->pdo->query(
+            $requete = $this->pdo->prepare(
                 'UPDATE ' . $table
                 . ' SET ' . $formattedArgs['fields']
                 . $formattedArgs['conditions']
             );
+            $requete->execute($values);
             if ($requete->rowCount() != 0) {
                 return 1;
             } else {
@@ -280,9 +296,9 @@ class Tables implements \ArrayAccess
             $value = "'$value'";
         }
         if ($this->find(['conditions' => "$field = " . "$value"])) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -290,9 +306,10 @@ class Tables implements \ArrayAccess
      *
      * @param  array $args fields = array contenant les noms des colonnes / conditions = string contenant les conditions
      * qui seront misent dans le WHERE / join = array contenant les jointures (INNER JOIN ou LEFT JOIN)
+     * @param array $values
      * @return array
      */
-    public function find(array $args = []): array
+    public function find(array $args = [], array $values = []): array
     {
         try {
             $table = $this->getTable(get_class($this));
@@ -306,7 +323,7 @@ class Tables implements \ArrayAccess
                 . $formattedArgs['order']
                 . $formattedArgs['limit']
             );
-            $requete->execute([]);
+            $requete->execute($values);
             if ($requete->rowCount() != 0) {
                 $this->setModelsValues($requete->fetchAll(\PDO::FETCH_OBJ));
                 return $this->models;

@@ -105,17 +105,6 @@ class UsersModel extends Tables
     }
 
     /**
-     * Réinitialise le token de confirmation à la valeur NULL
-     *
-     * @return UsersModel
-     */
-    public function resetConfirmationToken(): self
-    {
-        $this->confirmationToken = 'NULL';
-        return $this;
-    }
-
-    /**
      * Sauvegarde un utilisateur dans la base de données
      *
      * @return int
@@ -124,19 +113,27 @@ class UsersModel extends Tables
     {
         return $this->add(
             [
-            'fields' => 'nom,prenom,email,username,password,'
-                . 'confirmation_token,confirmed,registered_at',
-            'values' =>
-                "
-                    '$this->nom',
-                    '$this->prenom',
-                    '$this->email',
-                    '$this->username',
-                    '$this->password',
-                    '$this->confirmation_token',
-                    $this->confirmed,
-                    '$this->registered_at'
-                "
+                'fields' =>
+                    [
+                        'nom',
+                        'prenom',
+                        'email',
+                        'username',
+                        'password',
+                        'confirmation_token',
+                        'confirmed',
+                        'registered_at'
+                    ]
+            ],
+            [
+                'nom' => $this->nom,
+                'prenom' => $this->prenom,
+                'email' => $this->email,
+                'username' => $this->username,
+                'password' => $this->password,
+                'confirmation_token' => $this->confirmation_token,
+                'confirmed' => $this->confirmed,
+                'registered_at' => $this->registered_at
             ]
         );
     }
@@ -150,16 +147,24 @@ class UsersModel extends Tables
     {
         return $this->amend(
             [
-            'fields' =>
-                [
-                    "nom = '$this->nom'",
-                    "prenom = '$this->prenom'",
-                    "email = '$this->email'",
-                    "username = '$this->username'",
-                    "confirmation_token = '$this->confirmation_token'",
-                    "confirmed = $this->confirmed"
-                ],
-            'conditions' => 'id = ' . $this->id
+                'fields' =>
+                    [
+                        "nom = :nom",
+                        "prenom = :prenom",
+                        "email = :email",
+                        "username = :username",
+                        "confirmation_token = :confirmation_token",
+                        "confirmed = :confirmed"
+                    ],
+                'conditions' => 'id = ' . $this->id
+            ],
+            [
+                ':nom' => $this->nom,
+                ':prenom' => $this->prenom,
+                ':email' => $this->email,
+                ':username' => $this->username,
+                ':confirmation_token' => $this->confirmation_token,
+                ':confirmed' => $this->confirmed,
             ]
         );
     }
@@ -171,21 +176,27 @@ class UsersModel extends Tables
      */
     public function profilUpdate(): int
     {
-        $values = [
+        $args = [
             'fields' =>
                 [
-                    "nom = '$this->nom'",
-                    "prenom = '$this->prenom'",
-                    "email = '$this->email'",
-                    "username = '$this->username'"
+                    "nom = :nom",
+                    "prenom = :prenom",
+                    "email = :email",
+                    "username = :username"
                 ],
             'conditions' => 'id = ' . $this->id
         ];
-
+        $values = [
+            ':nom' => $this->nom,
+            ':prenom' => $this->prenom,
+            ':email' => $this->email,
+            ':username' => $this->username,
+        ];
         if (isset($this->password)) {
-            $values['fields'][] .= "password = '$this->password'";
+            $args['fields'][] .= "password = :password";
+            $values[':password'] = $this->password;
         }
-        return $this->amend($values);
+        return $this->amend($args, $values);
     }
 
     /**

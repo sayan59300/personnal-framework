@@ -1,6 +1,7 @@
 <?php
 /* * *************** * */
 /* * HELPER SECURITY * */
+
 /* * *************** * */
 
 use Itval\core\Classes\Session;
@@ -65,4 +66,46 @@ function generateToken(): string
     Session::set('csrf_token', $token);
     Session::set('time', time());
     return $token;
+}
+
+
+/**
+ * Vérifie que la session d'authentification existe et qu'un utilisateur est connecté
+ *
+ * @return bool
+ */
+function isAuthenticated(): bool
+{
+    if (currentUser() && currentUser()->statut === 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Contrôle si l'utilisateur est l'utilisateur connecté
+ *
+ * @param  string $id
+ * @return bool
+ */
+function isCurrentUser(string $id): bool
+{
+    if (currentUser()->id === $id) {
+        return true;
+    }
+}
+
+/**
+ * Contrôle si le token csrf est valide
+ *
+ * @return bool
+ */
+function isValidToken(): bool
+{
+    if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token'))) {
+        return true;
+    } else {
+        return false;
+    }
 }

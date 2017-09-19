@@ -34,7 +34,7 @@ class BaseController extends Controller
             $this->set('scripts', "<script>CKEDITOR.replace( 'message', {'height': '400'} );</script>");
             return $this->render('contact');
         }
-        if (!Validator::isValidToken()) {
+        if (!isValidToken()) {
             $this->emitter->emit('token.rejected');
             error('Token invalide');
             return redirect('/contact');
@@ -42,19 +42,24 @@ class BaseController extends Controller
         $posted = $this->getPost();
         $values = [
             'categorie' => htmlentities($posted['categorie']),
-            'nom' => Validator::isValidString(ALPHABETIC, $posted['nom']),
-            'prenom' => Validator::isValidString(ALPHABETIC, $posted['prenom']),
-            'email' => Validator::isValidEmail($posted['email']),
-            'objet' => Validator::isValidString(ALPHABETIC, $posted['objet']),
+            'nom' => $posted['nom'],
+            'prenom' => $posted['prenom'],
+            'email' => $posted['email'],
+            'objet' => $posted['objet'],
             'message' => $posted['message']
         ];
-        $control = $this->formValidation($values);
-        if (!is_array($control)) {
+        $validator = new Validator($values);
+        $validator->isValidString('nom', ALPHABETIC, true);
+        $validator->isValidString('prenom', ALPHABETIC, true);
+        $validator->isValidEmail('email', true);
+        $validator->isValidString('objet', ALPHABETIC, true);
+        $validator->required('message');
+        if (count($validator->getErrors()) === 0) {
             $this->resetValuesSession($values);
             $this->emitter->emit('message.sended', [$values]);
         }
         $this->setValuesSession($values);
-        error($this->formattedErrors($control));
+        error($this->formattedErrors($validator->getErrors()));
         redirect('/contact');
     }
 

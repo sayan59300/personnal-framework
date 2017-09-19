@@ -2,6 +2,8 @@
 
 namespace Itval\core\Classes;
 
+use Itval\core\DAO\Tables;
+
 /**
  * Class Validator Classe contenant les fonctions de validations
  *
@@ -10,90 +12,210 @@ namespace Itval\core\Classes;
  */
 class Validator
 {
+    /**
+     * Contient les valeurs à valider
+     *
+     * @var array
+     */
+    private $values;
 
     /**
-     * Retourne false ou la chaine de caractère si elle est valide
+     * Contient les erreurs de validation
      *
-     * @param  string $value
-     * @return bool|string
+     * @var array
      */
-    public static function isValidEmail(string $value)
+    private $errors = [];
+
+    /**
+     * Validator constructor.
+     * @param array $args
+     */
+    public function __construct(array $args)
     {
-        return filter_var($value, FILTER_VALIDATE_EMAIL);
+        $this->values = $args;
     }
 
     /**
-     * Retourne false ou la chaine de caractère si elle est validée par le regex
+     * Retourne les valeurs (utilisé dans les tests unitaires)
      *
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->values;
+    }
+
+    /**
+     * Contrôle la validité d'un email et sa confirmation si nécessaire
+     *
+     * @param string $key
+     * @param bool $required
+     * @param string $confirmation
+     * @return bool
+     */
+    public function isValidEmail(string $key, bool $required = false, string $confirmation = null)
+    {
+        if ($required) {
+            if ($this->required($key) === false) {
+                return false;
+            }
+        }
+        if (filter_var($this->values[$key], FILTER_VALIDATE_EMAIL) === false) {
+            array_push($this->errors, $this->invalidValue($key));
+            return false;
+        }
+        if (!is_null($confirmation)) {
+            if ($this->values[$key] !== $this->values[$confirmation]) {
+                array_push($this->errors, "La confirmation de l'email ne correspond pas");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Contrôle si une champ requis est renseigné
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function required(string $key): bool
+    {
+        if (empty($this->values[$key])) {
+            array_push($this->errors, "Le champ $key est requis");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Retourne le message pour les champs invalides
+     *
+     * @param string $key
+     * @return string
+     */
+    private function invalidValue(string $key)
+    {
+        return "Le champ $key n'est pas valide";
+    }
+
+    /**
+     * Contrôle la validité d'un string en fonction du regex en arguments et sa confirmation si nécessaire
+     *
+     * @param string $key
      * @param  string $regex
-     * @param  string $value
-     * @return bool|string
-     */
-    public static function isValidString(string $regex, string $value)
-    {
-        return filter_var($value, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => $regex]]);
-    }
-
-    /**
-     * Retourne false ou la valeur de l'entier si elle est valide
-     *
-     * @param  int $value
-     * @return mixed
-     */
-    public static function isValidInt(int $value)
-    {
-        return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-    }
-
-    /**
-     * Retourne false ou la valeur du float si elle est valide
-     *
-     * @param  float $value
-     * @return mixed
-     */
-    public static function isValidFloat(float $value)
-    {
-        return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
-    }
-
-    /**
-     * Vérifie que la session d'authentification existe et qu'un utilisateur est connecté
-     *
+     * @param bool $required
+     * @param string $confirmation
      * @return bool
      */
-    public static function isAuthenticated(): bool
+    public function isValidString(string $key, string $regex, bool $required = false, string $confirmation = null)
     {
-        if (currentUser() && currentUser()->statut === 1) {
+        if ($required) {
+            if ($this->required($key) === false) {
+                return false;
+            }
+        }
+        if (filter_var($this->values[$key], FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => $regex]]) === false) {
+            array_push($this->errors, $this->invalidValue($key));
+            return false;
+        }
+        if (!is_null($confirmation)) {
+            if ($this->values[$key] !== $this->values[$confirmation]) {
+                array_push($this->errors, "La confirmation du champ $key ne correspond pas");
+                return false;
+            }
             return true;
-        } else {
+        }
+    }
+
+    /**
+     * Contrôle la validité d'un entier
+     *
+     * @param string $key
+     * @param bool $required
+     * @return bool
+     */
+    public function isValidInt(string $key, bool $required = false)
+    {
+        if ($required) {
+            if ($this->required($key)) {
+                if (!is_integer($this->values[$key])) {
+                    array_push($this->errors, $this->invalidValue($key));
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        if (!is_integer($this->values[$key])) {
+            array_push($this->errors, $this->invalidValue($key));
             return false;
         }
     }
 
     /**
-     * Contrôle si l'utilisateur est l'utilisateur connecté
+     * Contrôle la validité d'un float
      *
-     * @param  string $id
+     * @param string $key
+     * @param bool $required
      * @return bool
      */
-    public static function isCurrentUser(string $id): bool
+    public function isValidFloat(string $key, bool $required = false)
     {
-        if (currentUser()->id === $id) {
+        if ($required) {
+            if ($this->required($key)) {
+                if (!is_float($this->values[$key])) {
+                    array_push($this->errors, $this->invalidValue($key));
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        if (!is_float($this->values[$key])) {
+            array_push($this->errors, $this->invalidValue($key));
+            return false;
+        }
+    }
+
+    /**
+     * Contrôle si le champ désiré est libre (unique en base de données)
+     *
+     * @param string $model
+     * @param string $field
+     * @return bool
+     */
+    public function isAvailable(string $model, string $field)
+    {
+        /** @var Tables $model */
+        $model = new $model;
+        $id = $this->values['id'] ?? 0;
+        $check = $model->find(['fields' => $field, 'conditions' => 'id = ' . $id]);
+        if ($check !== []) {
+            if ($this->values[$field] !== current($check)->username) {
+                if (!$model->isAvailable($field, $this->values[$field])) {
+                    array_push($this->errors, "Le champ $field est déja pris");
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        } else {
+            if (!$model->isAvailable($field, $this->values[$field])) {
+                array_push($this->errors, "Le champ $field est déja pris");
+                return false;
+            }
             return true;
         }
     }
 
     /**
-     * Contrôle si le token csrf est valide
+     * Retourne le tableau d'erreurs
      *
-     * @return bool
+     * @return array
      */
-    public static function isValidToken(): bool
+    public function getErrors()
     {
-        if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token'))) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->errors;
     }
 }
