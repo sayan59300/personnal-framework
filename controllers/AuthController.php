@@ -257,7 +257,7 @@ class AuthController extends Controller
             $user->prenom = $values['prenom'];
             $user->email = $values['email'];
             $user->username = $values['username'];
-            $this->setNewPassword($values, $user);
+            $user->password = $values['password'];
             $user->profilUpdate();
             LoggerFactory::getInstance('users')->addInfo('Modification de profil', ['username' => $values['username']]);
             success('Votre profil a été mis à jour avec succès');
