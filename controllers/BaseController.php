@@ -113,36 +113,6 @@ class BaseController extends Controller
     }
 
     /**
-     * Fonction de validation du formulaire de contact
-     *
-     * @param  array $values
-     * @return array|bool
-     */
-    private function formValidation(array $values)
-    {
-        $wrongValues = [];
-        if (isset($values['nom']) && !$values['nom']) {
-            array_push($wrongValues, 'Le nom n\'est pas valide');
-        }
-        if (isset($values['prenom']) && !$values['prenom']) {
-            array_push($wrongValues, 'Le prenom n\'est pas valide');
-        }
-        if (isset($values['objet']) && !$values['objet']) {
-            array_push($wrongValues, 'L\'objet du message n\'est pas valide');
-        }
-        if (isset($values['email']) && !$values['email']) {
-            array_push($wrongValues, 'L\'email n\'est pas valide');
-        }
-        if (empty($values['message'])) {
-            array_push($wrongValues, 'Le message n\'est pas valide');
-        }
-        if ($wrongValues !== []) {
-            return $wrongValues;
-        }
-        return true;
-    }
-
-    /**
      * Rend la vue mentions
      *
      * @return Response
