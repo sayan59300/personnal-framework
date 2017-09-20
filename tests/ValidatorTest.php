@@ -178,6 +178,35 @@ class ValidatorTest extends TestCase
         $this->assertCount(6, $validator->getErrors());
     }
 
+    public function testIsValidStringPhrase()
+    {
+        $validator = new Validator(
+            [
+                'phrase1' => 'Ceci est une phrase simple.',
+                'phrase2' => 'Ceci est une phrase, avec une virgule.',
+                'phrase3' => 'Ceci est une phrase, avec une virgule et un point d\'intérogation ?',
+                'phrase4' => 'Ceci est une phrase, avec une virgule et un point d\'exclamation !',
+                'phrase5' => 'Ceci est une phrase, avec une virgule et un point d\'exclamation mal positionné!',
+                'phrase6' => 'Ceci est une phrase, avec une virgule et un point virgule ; sans point à la fin',
+                'phrase7' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point à la fin.',
+                'phrase8' => 'Lorem ipsum dolor sit amet, consectetur : adipisicing elit ! Dicta dolor eius ; explicabo illo ipsam modi nemo, nesciunt quae. C\'orporis est facilis quis ullam voluptate, voluptatum ? Aliquid doloribus minima nam sed.',
+                'phrase9' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point d\'intérogation collé à la fin?',
+                'phrase10' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point d\'exclamation collé à la fin!'
+            ]
+        );
+        $validator->isValidString('phrase1', TEXT);
+        $validator->isValidString('phrase2', TEXT);
+        $validator->isValidString('phrase3', TEXT);
+        $validator->isValidString('phrase4', TEXT);
+        $validator->isValidString('phrase5', TEXT);
+        $validator->isValidString('phrase6', TEXT);
+        $validator->isValidString('phrase7', TEXT);
+        $validator->isValidString('phrase8', TEXT);
+        $validator->isValidString('phrase9', TEXT);
+        $validator->isValidString('phrase10', TEXT);
+        $this->assertCount(4, $validator->getErrors());
+    }
+
     public function testIsValidStringAlphanumeric()
     {
         $validator = new Validator(
