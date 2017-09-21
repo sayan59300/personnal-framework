@@ -191,7 +191,14 @@ class ValidatorTest extends TestCase
                 'phrase7' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point à la fin.',
                 'phrase8' => 'Lorem ipsum dolor sit amet, consectetur : adipisicing elit ! Dicta dolor eius ; explicabo illo ipsam modi nemo, nesciunt quae. C\'orporis est facilis quis ullam voluptate, voluptatum ? Aliquid doloribus minima nam sed.',
                 'phrase9' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point d\'intérogation collé à la fin?',
-                'phrase10' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point d\'exclamation collé à la fin!'
+                'phrase10' => 'Ceci est une phrase, avec une virgule et un point virgule ; avec point d\'exclamation collé à la fin!',
+                'phrase11' => 'Ceci est une phrase, avec une virgule ;et 2 points virgule dont un est invalide ; avec point d\'exclamation !',
+                'phrase12' => 'Deux phrases, avec une virgule !et 1 point d\'exclamation invalide avec point valide.',
+                'phrase13' => 'Deux phrases, avec une virgule ! et 1 point d\'exclamation valide avec point valide.',
+                'phrase14' => 'Deux phrases, avec une virgule.et 1 point invalide avec point valide.',
+                'phrase15' => 'Deux phrases, avec une virgule. et 1 point valide avec point valide.',
+                'phrase16' => 'Deux phrases,avec une virgule invalide. et 2 points valides.',
+                'phrase17' => 'Deux phrases, avec une virgule valide. et 2 points valides.'
             ]
         );
         $validator->isValidString('phrase1', TEXT);
@@ -204,7 +211,14 @@ class ValidatorTest extends TestCase
         $validator->isValidString('phrase8', TEXT);
         $validator->isValidString('phrase9', TEXT);
         $validator->isValidString('phrase10', TEXT);
-        $this->assertCount(4, $validator->getErrors());
+        $validator->isValidString('phrase11', TEXT);
+        $validator->isValidString('phrase12', TEXT);
+        $validator->isValidString('phrase13', TEXT);
+        $validator->isValidString('phrase14', TEXT);
+        $validator->isValidString('phrase15', TEXT);
+        $validator->isValidString('phrase16', TEXT);
+        $validator->isValidString('phrase17', TEXT);
+        $this->assertCount(8, $validator->getErrors());
     }
 
     public function testIsValidStringAlphanumeric()
