@@ -198,7 +198,9 @@ class ValidatorTest extends TestCase
                 'phrase14' => 'Deux phrases, avec une virgule.et 1 point invalide avec point valide.',
                 'phrase15' => 'Deux phrases, avec une virgule. et 1 point valide avec point valide.',
                 'phrase16' => 'Deux phrases,avec une virgule invalide. et 2 points valides.',
-                'phrase17' => 'Deux phrases, avec une virgule valide. et 2 points valides.'
+                'phrase17' => 'Deux phrases, avec une virgule valide. et 2 points valides.',
+                'phrase18' => 'Deux phrases, avec une virgule valide. et 1 points valides et 2 points à la fin..',
+                'phrase19' => 'Deux phrases, avec une virgule valide. et 1 points valides et 2 points à la fin...'
             ]
         );
         $validator->isValidString('phrase1', TEXT);
@@ -218,7 +220,9 @@ class ValidatorTest extends TestCase
         $validator->isValidString('phrase15', TEXT);
         $validator->isValidString('phrase16', TEXT);
         $validator->isValidString('phrase17', TEXT);
-        $this->assertCount(8, $validator->getErrors());
+        $validator->isValidString('phrase18', TEXT);
+        $validator->isValidString('phrase19', TEXT);
+        $this->assertCount(9, $validator->getErrors());
     }
 
     public function testIsValidStringAlphanumeric()
