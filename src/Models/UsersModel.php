@@ -192,10 +192,6 @@ class UsersModel extends Tables
             ':email' => $this->email,
             ':username' => $this->username,
         ];
-        if ($this->password !== '') {
-            $args['fields'][] .= "password = :password";
-            $values[':password'] = encrypted($this->password);
-        }
         return $this->amend($args, $values);
     }
 

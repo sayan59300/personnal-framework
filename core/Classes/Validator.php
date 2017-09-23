@@ -3,6 +3,8 @@
 namespace Itval\core\Classes;
 
 use Itval\core\DAO\Tables;
+use Itval\core\Factories\LoggerFactory;
+use Itval\src\Models\UsersModel;
 
 /**
  * Class Validator Classe contenant les fonctions de validations
@@ -61,16 +63,20 @@ class Validator
             }
         }
         if (filter_var($this->values[$key], FILTER_VALIDATE_EMAIL) === false) {
-            array_push($this->errors, $this->invalidValue($key));
+            $this->errors[$key] = $this->invalidValue();
             return false;
         }
         if (!is_null($confirmation)) {
             if ($this->values[$key] !== $this->values[$confirmation]) {
-                array_push($this->errors, "La confirmation de l'email ne correspond pas");
+                $this->errors[$confirmation] = "La confirmation de l'email ne correspond pas";
                 return false;
             }
+            Session::delete('validator_error_' . $confirmation);
             return true;
         }
+        Session::delete('validator_error_' . $key);
+        Session::delete('validator_error_' . $confirmation);
+        return true;
     }
 
     /**
@@ -82,21 +88,21 @@ class Validator
     public function required(string $key): bool
     {
         if (empty($this->values[$key])) {
-            array_push($this->errors, "Le champ $key est requis");
+            $this->errors[$key] = "Le champ est requis";
             return false;
         }
+        Session::delete('validator_error_' . $key);
         return true;
     }
 
     /**
      * Retourne le message pour les champs invalides
      *
-     * @param string $key
      * @return string
      */
-    private function invalidValue(string $key)
+    private function invalidValue()
     {
-        return "Le champ $key n'est pas valide";
+        return "La valeur entrée n'est pas valide";
     }
 
     /**
@@ -116,16 +122,20 @@ class Validator
             }
         }
         if (filter_var($this->values[$key], FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => $regex]]) === false) {
-            array_push($this->errors, $this->invalidValue($key));
+            $this->errors[$key] = $this->invalidValue();
             return false;
         }
         if (!is_null($confirmation)) {
             if ($this->values[$key] !== $this->values[$confirmation]) {
-                array_push($this->errors, "La confirmation du champ $key ne correspond pas");
+                $this->errors[$confirmation] = "Les valeurs ne correspondent pas";
                 return false;
             }
+            Session::delete('validator_error_' . $confirmation);
             return true;
         }
+        Session::delete('validator_error_' . $key);
+        Session::delete('validator_error_' . $confirmation);
+        return true;
     }
 
     /**
@@ -140,17 +150,20 @@ class Validator
         if ($required) {
             if ($this->required($key)) {
                 if (!is_integer($this->values[$key])) {
-                    array_push($this->errors, $this->invalidValue($key));
+                    $this->errors[$key] = $this->invalidValue();
                     return false;
                 }
+                Session::delete('validator_error_' . $key);
                 return true;
             }
             return false;
         }
         if (!is_integer($this->values[$key])) {
-            array_push($this->errors, $this->invalidValue($key));
+            $this->errors[$key] = $this->invalidValue();
             return false;
         }
+        Session::delete('validator_error_' . $key);
+        return true;
     }
 
     /**
@@ -165,46 +178,62 @@ class Validator
         if ($required) {
             if ($this->required($key)) {
                 if (!is_float($this->values[$key])) {
-                    array_push($this->errors, $this->invalidValue($key));
+                    $this->errors[$key] = $this->invalidValue();
                     return false;
                 }
+                Session::delete('validator_error_' . $key);
                 return true;
             }
             return false;
         }
         if (!is_float($this->values[$key])) {
-            array_push($this->errors, $this->invalidValue($key));
+            $this->errors[$key] = $this->invalidValue();
             return false;
         }
+        Session::delete('validator_error_' . $key);
+        return true;
     }
 
     /**
      * Contrôle si le champ désiré est libre (unique en base de données)
      *
-     * @param string $model
+     * @param string $modelClass
      * @param string $field
      * @return bool
      */
-    public function isAvailable(string $model, string $field)
+    public function isAvailable(string $modelClass, string $field)
     {
         /** @var Tables $model */
-        $model = new $model;
-        $id = $this->values['id'] ?? 0;
-        $check = $model->find(['fields' => $field, 'conditions' => 'id = ' . $id]);
-        if ($check !== []) {
-            if ($this->values[$field] !== current($check)->username) {
-                if (!$model->isAvailable($field, $this->values[$field])) {
-                    array_push($this->errors, "Le champ $field est déja pris");
-                    return false;
+        $model = new $modelClass;
+        if ($modelClass === UsersModel::class && $field === 'username') {
+            $id = $this->values['id'] ?? 0;
+            $check = $model->find(['fields' => $field, 'conditions' => 'id = ' . $id]);
+            if ($check !== []) {
+                if ($this->values[$field] !== current($check)->username) {
+                    if (!$model->isAvailable($field, $this->values[$field])) {
+                        $this->errors[$field] = "La valeur entrée est déja prise";
+                        return false;
+                    }
+                    Session::delete('validator_error_' . $field);
+                    return true;
                 }
+                Session::delete('validator_error_' . $field);
                 return true;
-            }
-            return true;
-        } else {
-            if (!$model->isAvailable($field, $this->values[$field])) {
-                array_push($this->errors, "Le champ $field est déja pris");
+            } else {
+                $this->errors[$field] = "Impossible de récupérer les données pour effectuer la comparaison, contacter 
+                l'administrateur de la base de donnée si le problème persiste";
+                LoggerFactory::getInstance('database')->addCritical(
+                    'Erreur de récupération de données de comparaison du validateur',
+                    ['field' => $field, 'model' => $modelClass, 'id' => $id]
+                );
                 return false;
             }
+        } else {
+            if (!$model->isAvailable($field, $this->values[$field])) {
+                $this->errors[$field] = "La valeur entrée est déja prise";
+                return false;
+            }
+            Session::delete('validator_error_' . $field);
             return true;
         }
     }
@@ -212,10 +241,13 @@ class Validator
     /**
      * Retourne le tableau d'erreurs
      *
-     * @return array
+     * @return int
      */
-    public function getErrors()
+    public function getErrors(): int
     {
-        return $this->errors;
+        foreach ($this->errors as $key => $value) {
+            Session::set('validator_error_' . $key, " * $value");
+        }
+        return count($this->errors);
     }
 }

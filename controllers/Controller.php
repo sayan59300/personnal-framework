@@ -149,6 +149,7 @@ class Controller
             $body = ob_get_clean();
             $response->withStatus(200);
             $response->getBody()->write($body);
+            $this->resetValidationSession();
             return $response;
         }
         return error404();
@@ -220,6 +221,18 @@ class Controller
         $keys = array_keys($args);
         foreach ($keys as $key) {
             Session::delete($key);
+        }
+    }
+
+    /**
+     * Efface les messages de validation stockés en session
+     */
+    private function resetValidationSession()
+    {
+        foreach ($_SESSION as $key => $value) {
+            if (strstr($key, 'validator_error_')) {
+                Session::delete($key);
+            }
         }
     }
 }

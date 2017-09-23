@@ -208,8 +208,6 @@ class AuthController extends Controller
             ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => $user->prenom], 'Votre prénom')
             ->setInput('email', 'email', ['id' => 'email', 'value' => $user->email], 'Votre email')
             ->setInput('text', 'username', ['id' => 'username', 'value' => $user->username], 'Votre nom d\'utilisateur')
-            ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe')
-            ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation mot de passe')
             ->setButton('submit', 'update', 'Mettre à jour votre profil', ['class' => 'btn btn-primary']);
         return $form;
     }
@@ -236,9 +234,7 @@ class AuthController extends Controller
             'nom' => $posted['nom'],
             'prenom' => $posted['prenom'],
             'email' => $posted['email'],
-            'username' => $posted['username'],
-            'password' => $posted['password'] ?? '',
-            'confirm_password' => $posted['confirm_password'] ?? ''
+            'username' => $posted['username']
         ];
         $validator = new Validator($values);
         $validator->isValidInt('id');
@@ -247,23 +243,24 @@ class AuthController extends Controller
         $validator->isValidEmail('email', true);
         $validator->isValidString('username', USERNAME, true);
         $validator->isAvailable(UsersModel::class, 'username');
-        if ($posted['password'] !== '') {
-            $validator->isValidString('password', PASSWORD, false, 'confirm_password');
-        }
-        if (count($validator->getErrors()) === 0) {
+        if ($validator->getErrors() === 0) {
+            if ($values['id'] != currentUser()->id) {
+                error("L'id ne correspont pas à celui de l'utilisateur connecté");
+                LoggerFactory::getInstance('security')->addAlert("Tentative de modification d'un profil "
+                    . "avec un id invalide", ['user_id' => currentUser()->id]);
+                return redirect('/profil');
+            }
             $user = new UsersModel;
             $user->id = $values['id'];
             $user->nom = $values['nom'];
             $user->prenom = $values['prenom'];
             $user->email = $values['email'];
             $user->username = $values['username'];
-            $user->password = $values['password'];
             $user->profilUpdate();
             LoggerFactory::getInstance('users')->addInfo('Modification de profil', ['username' => $values['username']]);
             success('Votre profil a été mis à jour avec succès');
             return redirect('/profil');
         }
-        error($this->formattedErrors($validator->getErrors()));
         return redirect('/profil');
     }
 
@@ -334,7 +331,7 @@ class AuthController extends Controller
         $validator->isValidString('username', USERNAME, true);
         $validator->isAvailable(UsersModel::class, 'username');
         $validator->isValidString('password', PASSWORD, true, 'confirm_password');
-        if (count($validator->getErrors()) === 0) {
+        if ($validator->getErrors() === 0) {
             $this->resetValuesSession($values);
             $user = new UsersModel;
             $user->nom = $values['nom'];
@@ -349,7 +346,6 @@ class AuthController extends Controller
             return true;
         }
         $this->setValuesSession($values);
-        error($this->formattedErrors($validator->getErrors()));
         return redirect('/registration');
     }
 }

@@ -6,23 +6,23 @@
             <form name="<?= $contactForm->name; ?>" method="<?= $contactForm->method; ?>"
                   action="<?= $contactForm->action; ?>">
                 <h4>Catégorie concernée par le message</h4>
-                <select class="form-control" name="categorie">
-                    <option value="Défaut" <?= (printSession('categorie') === 'Défaut') ? 'selected ' : ''; ?>>
+                <select class="form-control" name="categorie_contact">
+                    <option value="Défaut" <?= (printSession('categorie_contact') === 'Défaut') ? 'selected ' : ''; ?>>
                         Sélectionnez une catégorie (facultatif)
                     </option>
-                    <option value="Inscription" <?= (printSession('categorie') === 'Inscription') ? 'selected ' : ''; ?>>
+                    <option value="Inscription" <?= (printSession('categorie_contact') === 'Inscription') ? 'selected ' : ''; ?>>
                         Inscription
                     </option>
-                    <option value="Compte utilisateur" <?= (printSession('categorie') === 'Compte utilisateur') ? 'selected ' : ''; ?>>
+                    <option value="Compte utilisateur" <?= (printSession('categorie_contact') === 'Compte utilisateur') ? 'selected ' : ''; ?>>
                         Compte utilisateur
                     </option>
-                    <option value="Site" <?= (printSession('categorie') === 'Site') ? 'selected ' : ''; ?>>Utilisation
+                    <option value="Site" <?= (printSession('categorie_contact') === 'Site') ? 'selected ' : ''; ?>>Utilisation
                         du site
                     </option>
-                    <option value="Information" <?= (printSession('categorie') === 'Information') ? 'selected ' : ''; ?>>
+                    <option value="Information" <?= (printSession('categorie_contact') === 'Information') ? 'selected ' : ''; ?>>
                         Demande d'information
                     </option>
-                    <option value="Divers" <?= (printSession('categorie') === 'Divers') ? 'selected ' : ''; ?>>Divers
+                    <option value="Divers" <?= (printSession('categorie_contact') === 'Divers') ? 'selected ' : ''; ?>>Divers
                     </option>
                 </select>
                 <br/>

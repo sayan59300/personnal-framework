@@ -292,10 +292,7 @@ class Tables implements \ArrayAccess
      */
     public function isAvailable(string $field, string $value): bool
     {
-        if (is_string($value)) {
-            $value = "'$value'";
-        }
-        if ($this->find(['conditions' => "$field = " . "$value"])) {
+        if ($this->find(['conditions' => "$field = :$field"], [":$field" => $value])) {
             return false;
         }
         return true;

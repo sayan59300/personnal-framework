@@ -23,22 +23,22 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator(['email' => 'emaildetest@hotmail.fr']);
         $validator->isValidEmail('email');
-        $this->assertCount(0, $validator->getErrors());
+        $this->assertEquals(0, $validator->getErrors());
     }
 
     public function testIsValidEmailWithValidEmailAndValidConfirmation()
     {
         $validator = new Validator(['email' => 'emaildetest@hotmail.fr', 'confirm_email' => 'emaildetest@hotmail.fr']);
         $validator->isValidEmail('email', false, 'confirm_email');
-        $this->assertCount(0, $validator->getErrors());
+        $this->assertEquals(0, $validator->getErrors());
     }
 
     public function testIsValidEmailWithValidEmailAndInvalidConfirmation()
     {
         $validator = new Validator(['email' => 'emaildetest@hotmail.fr', 'confirm_email' => 'emailsetest@hotmail.fr']);
         $validator->isValidEmail('email', false, 'confirm_email');
-        $this->assertCount(1, $validator->getErrors());
-        $this->assertEquals("La confirmation de l'email ne correspond pas", current($validator->getErrors()));
+        $this->assertEquals(1, $validator->getErrors());
+        $this->assertEquals(' * La confirmation de l\'email ne correspond pas', $_SESSION['validator_error_confirm_email']);
     }
 
     public function testIsValidEmailWithInvalidEmail()
@@ -47,18 +47,18 @@ class ValidatorTest extends TestCase
         $validator->isValidEmail('email');
         $validator->isValidEmail('email2');
         $validator->isValidEmail('email3');
-        $this->assertCount(3, $validator->getErrors());
-        $this->assertEquals("Le champ email n'est pas valide", $validator->getErrors()[0]);
-        $this->assertEquals("Le champ email2 n'est pas valide", $validator->getErrors()[1]);
-        $this->assertEquals("Le champ email3 n'est pas valide", $validator->getErrors()[2]);
+        $this->assertEquals(3, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email2']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email3']);
     }
 
     public function testIsValidEmailWithRequiredAndEmptyValue()
     {
         $validator = new Validator(['email' => '']);
         $validator->isValidEmail('email', true);
-        $this->assertCount(1, $validator->getErrors());
-        $this->assertEquals("Le champ email est requis", current($validator->getErrors()));
+        $this->assertEquals(1, $validator->getErrors());
+        $this->assertEquals(' * Le champ est requis', $_SESSION['validator_error_email']);
     }
 
     public function testIsValidStringWithValidValue()
@@ -66,7 +66,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator(['nom' => 'Doe', 'username' => 'jdoe59']);
         $validator->isValidString('nom', ALPHABETIC);
         $validator->isValidString('username', USERNAME);
-        $this->assertCount(0, $validator->getErrors());
+        $this->assertEquals(0, $validator->getErrors());
     }
 
     public function testIsValidStringWithInvalidValue()
@@ -74,9 +74,9 @@ class ValidatorTest extends TestCase
         $validator = new Validator(['nom' => 'Doe_john', 'username' => 'j doe']);
         $validator->isValidString('nom', ALPHABETIC);
         $validator->isValidString('username', USERNAME);
-        $this->assertCount(2, $validator->getErrors());
-        $this->assertEquals("Le champ nom n'est pas valide", $validator->getErrors()[0]);
-        $this->assertEquals("Le champ username n'est pas valide", $validator->getErrors()[1]);
+        $this->assertEquals(2, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_nom']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_username']);
     }
 
     public function testIsValidStringWithRequiredAndEmptyValue()
@@ -84,9 +84,9 @@ class ValidatorTest extends TestCase
         $validator = new Validator(['nom' => '', 'username' => '']);
         $validator->isValidString('nom', ALPHABETIC, true);
         $validator->isValidString('username', USERNAME, true);
-        $this->assertCount(2, $validator->getErrors());
-        $this->assertEquals("Le champ nom est requis", $validator->getErrors()[0]);
-        $this->assertEquals("Le champ username est requis", $validator->getErrors()[1]);
+        $this->assertEquals(2, $validator->getErrors());
+        $this->assertEquals(' * Le champ est requis', $_SESSION['validator_error_nom']);
+        $this->assertEquals(' * Le champ est requis', $_SESSION['validator_error_username']);
     }
 
     public function testIsValidStringWithRequiredAndInvalidValue()
@@ -94,16 +94,16 @@ class ValidatorTest extends TestCase
         $validator = new Validator(['nom' => 'ertkj-sdf45', 'username' => 'sdfsdf03']);
         $validator->isValidString('nom', ALPHABETIC, true);
         $validator->isValidString('username', ALPHABETIC, true);
-        $this->assertCount(2, $validator->getErrors());
-        $this->assertEquals("Le champ nom n'est pas valide", $validator->getErrors()[0]);
-        $this->assertEquals("Le champ username n'est pas valide", $validator->getErrors()[1]);
+        $this->assertEquals(2, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_nom']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_username']);
     }
 
     public function testIsValidIntWithValidValue()
     {
         $validator = new Validator(['id' => 1]);
         $validator->isValidInt('id');
-        $this->assertCount(0, $validator->getErrors());
+        $this->assertEquals(0, $validator->getErrors());
     }
 
     public function testIsValidIntWithInvalidValue()
@@ -111,24 +111,24 @@ class ValidatorTest extends TestCase
         $validator = new Validator(['id' => 1.2, 'id2' => '2em']);
         $validator->isValidInt('id');
         $validator->isValidInt('id2');
-        $this->assertCount(2, $validator->getErrors());
-        $this->assertEquals("Le champ id n'est pas valide", $validator->getErrors()[0]);
-        $this->assertEquals("Le champ id2 n'est pas valide", $validator->getErrors()[1]);
+        $this->assertEquals(2, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_id']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_id2']);
     }
 
     public function testIsValidIntWithRequiredAndEmptyValue()
     {
         $validator = new Validator(['id' => '']);
         $validator->isValidFloat('id', true);
-        $this->assertCount(1, $validator->getErrors());
-        $this->assertEquals("Le champ id est requis", $validator->getErrors()[0]);
+        $this->assertEquals(1, $validator->getErrors());
+        $this->assertEquals(' * Le champ est requis', $_SESSION['validator_error_id']);
     }
 
     public function testIsValidFloatWithValidValue()
     {
         $validator = new Validator(['id' => 1.2]);
         $validator->isValidFloat('id');
-        $this->assertCount(0, $validator->getErrors());
+        $this->assertEquals(0, $validator->getErrors());
     }
 
     public function testIsValidFloatWithInvalidValue()
@@ -136,17 +136,17 @@ class ValidatorTest extends TestCase
         $validator = new Validator(['id' => 1, 'id2' => '2em']);
         $validator->isValidFloat('id');
         $validator->isValidFloat('id2');
-        $this->assertCount(2, $validator->getErrors());
-        $this->assertEquals("Le champ id n'est pas valide", $validator->getErrors()[0]);
-        $this->assertEquals("Le champ id2 n'est pas valide", $validator->getErrors()[1]);
+        $this->assertEquals(2, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_id']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_id2']);
     }
 
     public function testIsValidFloatWithRequiredAndEmptyValue()
     {
         $validator = new Validator(['id' => '']);
         $validator->isValidInt('id', true);
-        $this->assertCount(1, $validator->getErrors());
-        $this->assertEquals("Le champ id est requis", $validator->getErrors()[0]);
+        $this->assertEquals(1, $validator->getErrors());
+        $this->assertEquals(' * Le champ est requis', $_SESSION['validator_error_id']);
     }
 
     public function testIsValidStringSlug()
@@ -175,7 +175,13 @@ class ValidatorTest extends TestCase
         $validator->isValidString('slug8', SLUG);
         $validator->isValidString('slug9', SLUG);
         $validator->isValidString('slug10', SLUG);
-        $this->assertCount(6, $validator->getErrors());
+        $this->assertEquals(6, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_slug4']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_slug5']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_slug6']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_slug7']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_slug8']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_slug9']);
     }
 
     public function testIsValidStringPhrase()
@@ -222,7 +228,16 @@ class ValidatorTest extends TestCase
         $validator->isValidString('phrase17', TEXT);
         $validator->isValidString('phrase18', TEXT);
         $validator->isValidString('phrase19', TEXT);
-        $this->assertCount(9, $validator->getErrors());
+        $this->assertEquals(9, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase5']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase6']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase9']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase10']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase11']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase12']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase14']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase16']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase18']);
     }
 
     public function testIsValidStringAlphanumeric()
@@ -237,7 +252,8 @@ class ValidatorTest extends TestCase
         $validator->isValidString('username1', ALPHANUMERIC);
         $validator->isValidString('username2', ALPHANUMERIC);
         $validator->isValidString('username3', ALPHANUMERIC);
-        $this->assertCount(1, $validator->getErrors());
+        $this->assertEquals(1, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_username3']);
     }
 
     public function testIsValidStringPhoneNumberWithCorrectValue()
@@ -264,7 +280,7 @@ class ValidatorTest extends TestCase
         $validator->isValidString('phone7', PHONE_NUMBER);
         $validator->isValidString('phone8', PHONE_NUMBER);
         $validator->isValidString('phone9', PHONE_NUMBER);
-        $this->assertCount(0, $validator->getErrors());
+        $this->assertEquals(0, $validator->getErrors());
     }
 
     public function testIsValidStringPhoneNumberWithoutCorrectValue()
@@ -283,6 +299,11 @@ class ValidatorTest extends TestCase
         $validator->isValidString('phone3', PHONE_NUMBER);
         $validator->isValidString('phone4', PHONE_NUMBER);
         $validator->isValidString('phone5', PHONE_NUMBER);
-        $this->assertCount(5, $validator->getErrors());
+        $this->assertEquals(5, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phone1']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phone2']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phone3']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phone4']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phone5']);
     }
 }

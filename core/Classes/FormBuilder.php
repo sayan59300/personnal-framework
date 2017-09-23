@@ -89,13 +89,13 @@ class FormBuilder extends Html
         if ($type === 'file') {
             $input = '<div class="form-group">' . $label . '<input type="file" '
                 . 'class="input-file' . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
-                . '</div>';
+                . '<span style="color: red;">' . Session::read('validator_error_' . $name) . '</span></div>';
         } elseif ($type === 'hidden') {
             $input = '<input type="' . $type . '" name="' . $name . '" ' . $attributes . '/>';
         } else {
             $input = '<div class="form-group">' . $label . '<input type="' . $type . '" '
                 . 'class="form-control' . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
-                . '</div>';
+                . '<span style="color: red;">' . Session::read('validator_error_' . $name) . '</span></div>';
         }
         $this->elements[$name] = $input;
         return $this;
@@ -144,7 +144,7 @@ class FormBuilder extends Html
         $attributes = self::formatAttributes($attributesArgs);
         $textArea = '<div class="form-group">' . $label . '<textarea rows="' . $rows . '" '
             . 'class="form-control' . ' ' . $classes . '" name="' . $name . '" ' . $attributes . '>' . $content . '</textarea>'
-            . '</div>';
+            . '<span style="color: red;">' . Session::read('validator_error_' . $name) . '</span></div>';
         $this->elements[$name] = $textArea;
         return $this;
     }
