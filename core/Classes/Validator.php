@@ -197,37 +197,27 @@ class Validator
     /**
      * Contrôle si le champ désiré est libre (unique en base de données)
      *
-     * @param string $modelClass
+     * @param string $model
      * @param string $field
      * @return bool
      */
-    public function isAvailable(string $modelClass, string $field)
+    public function isAvailable(string $model, string $field)
     {
         /** @var Tables $model */
-        $model = new $modelClass;
-        if ($modelClass === UsersModel::class && $field === 'username') {
-            $id = $this->values['id'] ?? 0;
-            $check = $model->find(['fields' => $field, 'conditions' => 'id = ' . $id]);
-            if ($check !== []) {
-                if ($this->values[$field] !== current($check)->username) {
-                    if (!$model->isAvailable($field, $this->values[$field])) {
-                        $this->errors[$field] = "La valeur entrée est déja prise";
-                        return false;
-                    }
-                    Session::delete('validator_error_' . $field);
-                    return true;
+        $model = new $model;
+        $id = $this->values['id'] ?? 0;
+        $check = $model->find(['fields' => $field, 'conditions' => 'id = ' . $id]);
+        if ($check !== []) {
+            if ($this->values[$field] !== current($check)->$field) {
+                if (!$model->isAvailable($field, $this->values[$field])) {
+                    $this->errors[$field] = "La valeur entrée est déja prise";
+                    return false;
                 }
                 Session::delete('validator_error_' . $field);
                 return true;
-            } else {
-                $this->errors[$field] = "Impossible de récupérer les données pour effectuer la comparaison, contacter 
-                l'administrateur de la base de donnée si le problème persiste";
-                LoggerFactory::getInstance('database')->addCritical(
-                    'Erreur de récupération de données de comparaison du validateur',
-                    ['field' => $field, 'model' => $modelClass, 'id' => $id]
-                );
-                return false;
             }
+            Session::delete('validator_error_' . $field);
+            return true;
         } else {
             if (!$model->isAvailable($field, $this->values[$field])) {
                 $this->errors[$field] = "La valeur entrée est déja prise";
