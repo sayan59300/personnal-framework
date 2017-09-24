@@ -40,8 +40,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setInput('text', 'nomdetest');
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">Nomdetest</label><input type="text" '
-            . 'class="form-control " name="nomdetest" id="nomdetest" /><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">Nomdetest</label><input type="text" '
+            . 'class="form-control " name="nomdetest" id="nomdetest" /><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -50,8 +50,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setInput('text', 'nomdetest', ['class' => 'class-de-test', 'size' => '40', 'height' => '450']);
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">Nomdetest</label><input type="text" '
-            . 'class="form-control class-de-test" name="nomdetest" id="nomdetest" size="40" height="450" /><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">Nomdetest</label><input type="text" '
+            . 'class="form-control class-de-test" name="nomdetest" id="nomdetest" size="40" height="450" /><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -60,8 +60,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setInput('text', 'nomdetest', ['size' => '40', 'height' => '450'], 'text de label de test');
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">text de label de test</label><input type="text" '
-            . 'class="form-control " name="nomdetest" id="nomdetest" size="40" height="450" /><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">text de label de test</label><input type="text" '
+            . 'class="form-control " name="nomdetest" id="nomdetest" size="40" height="450" /><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -88,8 +88,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setInput('file', 'nomdetest', ['size' => '40', 'height' => '450'], 'text de label de test');
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">text de label de test</label><input type="file" '
-            . 'class="input-file " name="nomdetest" id="nomdetest" size="40" height="450" /><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">text de label de test</label><input type="file" '
+            . 'class="input-file " name="nomdetest" id="nomdetest" size="40" height="450" /><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -148,8 +148,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setTextArea('10', 'nomdetest');
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">Nomdetest</label><textarea rows="10" '
-            . 'class="form-control " name="nomdetest" ></textarea><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">Nomdetest</label><textarea rows="10" '
+            . 'class="form-control " name="nomdetest" ></textarea><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -158,8 +158,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setTextArea('10', 'nomdetest', ['width' => '350', 'height' => '500']);
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">Nomdetest</label><textarea rows="10" '
-            . 'class="form-control " name="nomdetest" width="350" height="500" ></textarea><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">Nomdetest</label><textarea rows="10" '
+            . 'class="form-control " name="nomdetest" width="350" height="500" ></textarea><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -168,8 +168,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setTextArea('10', 'nomdetest', ['width' => '350', 'height' => '500'], 'label de test');
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">label de test</label><textarea rows="10" '
-            . 'class="form-control " name="nomdetest" width="350" height="500" ></textarea><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">label de test</label><textarea rows="10" '
+            . 'class="form-control " name="nomdetest" width="350" height="500" ></textarea><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }
@@ -178,8 +178,8 @@ class FormBuilderTest extends TestCase
     {
         $this->builder->setTextArea('10', 'nomdetest', ['width' => '350', 'height' => '500'], 'label de test', 'contenu de test');
         $this->assertEquals(
-            '<div class="form-group"><label for="nomdetest">label de test</label><textarea rows="10" '
-            . 'class="form-control " name="nomdetest" width="350" height="500" >contenu de test</textarea><span style="color: red;"></span></div>',
+            '<div class="form-group"><label for="nomdetest" class="control-label">label de test</label><textarea rows="10" '
+            . 'class="form-control " name="nomdetest" width="350" height="500" >contenu de test</textarea><span style="color: #a94442;"></span></div>',
             $this->builder->elements['nomdetest']
         );
     }

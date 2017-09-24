@@ -85,17 +85,22 @@ class FormBuilder extends Html
         if (isset($attributesArgs['class'])) {
             unset($attributesArgs['class']);
         }
+        if (Session::read('validator_error_' . $name)) {
+            $errorClass = ' has-error';
+        } else {
+            $errorClass = '';
+        }
         $attributes = self::formatAttributes($attributesArgs);
         if ($type === 'file') {
-            $input = '<div class="form-group">' . $label . '<input type="file" '
+            $input = '<div class="form-group' . $errorClass . '">' . $label . '<input type="file" '
                 . 'class="input-file' . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
-                . '<span style="color: red;">' . Session::read('validator_error_' . $name) . '</span></div>';
+                . '<span style="color: #a94442;">' . Session::read('validator_error_' . $name) . '</span></div>';
         } elseif ($type === 'hidden') {
             $input = '<input type="' . $type . '" name="' . $name . '" ' . $attributes . '/>';
         } else {
-            $input = '<div class="form-group">' . $label . '<input type="' . $type . '" '
+            $input = '<div class="form-group' . $errorClass . '">' . $label . '<input type="' . $type . '" '
                 . 'class="form-control' . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
-                . '<span style="color: red;">' . Session::read('validator_error_' . $name) . '</span></div>';
+                . '<span style="color: #a94442;">' . Session::read('validator_error_' . $name) . '</span></div>';
         }
         $this->elements[$name] = $input;
         return $this;
@@ -141,10 +146,15 @@ class FormBuilder extends Html
         if (isset($attributesArgs['class'])) {
             unset($attributesArgs['class']);
         }
+        if (Session::read('validator_error_' . $name)) {
+            $errorClass = ' has-error';
+        } else {
+            $errorClass = '';
+        }
         $attributes = self::formatAttributes($attributesArgs);
-        $textArea = '<div class="form-group">' . $label . '<textarea rows="' . $rows . '" '
+        $textArea = '<div class="form-group' . $errorClass . '">' . $label . '<textarea rows="' . $rows . '" '
             . 'class="form-control' . ' ' . $classes . '" name="' . $name . '" ' . $attributes . '>' . $content . '</textarea>'
-            . '<span style="color: red;">' . Session::read('validator_error_' . $name) . '</span></div>';
+            . '<span style="color: #a94442;">' . Session::read('validator_error_' . $name) . '</span></div>';
         $this->elements[$name] = $textArea;
         return $this;
     }
@@ -159,9 +169,9 @@ class FormBuilder extends Html
     private static function setLabel(string $id, string $texte = null): string
     {
         if (!$texte) {
-            return '<label for="' . $id . '">' . ucfirst($id) . '</label>';
+            return '<label for="' . $id . '" class="control-label">' . ucfirst($id) . '</label>';
         }
-        return '<label for="' . $id . '">' . $texte . '</label>';
+        return '<label for="' . $id . '" class="control-label">' . $texte . '</label>';
     }
 
     /**
