@@ -205,11 +205,17 @@ class Validator
     {
         /** @var Tables $model */
         $model = new $model;
+        if (strstr($field, '_')) {
+            $parts = explode('_', $field);
+            $modelField = $parts[0];
+        } else {
+            $modelField = $field;
+        }
         $id = $this->values['id'] ?? 0;
-        $check = $model->find(['fields' => $field, 'conditions' => 'id = ' . $id]);
+        $check = $model->find(['fields' => $modelField, 'conditions' => 'id = ' . $id]);
         if ($check !== []) {
-            if ($this->values[$field] !== current($check)->$field) {
-                if (!$model->isAvailable($field, $this->values[$field])) {
+            if ($this->values[$field] !== current($check)->$modelField) {
+                if (!$model->isAvailable($modelField, $this->values[$field])) {
                     $this->errors[$field] = "La valeur entrée est déja prise";
                     return false;
                 }
@@ -219,7 +225,7 @@ class Validator
             Session::delete('validator_error_' . $field);
             return true;
         } else {
-            if (!$model->isAvailable($field, $this->values[$field])) {
+            if (!$model->isAvailable($modelField, $this->values[$field])) {
                 $this->errors[$field] = "La valeur entrée est déja prise";
                 return false;
             }
@@ -239,5 +245,17 @@ class Validator
             Session::set('validator_error_' . $key, " * $value");
         }
         return count($this->errors);
+    }
+
+    /**
+     * Permet d'ajouter une erreur depuis l'extérieur dans le cas de contrôles supplémentaires non gérés nativement
+     *
+     * @param string $field
+     * @param string $message
+     */
+    public function setError(string $field, string $message)
+    {
+        $this->errors[$field] = $message;
+        Session::set('validator_error_' . $field, " * $message");
     }
 }
