@@ -55,16 +55,17 @@ class AuthController extends Controller
             $this->emitter->emit('token.rejected');
             error('Token invalide');
             return redirect();
+        } else {
+            $username = htmlentities($posted['username']);
+            $password = htmlentities(encrypted($posted['password']));
+            $user = new UsersModel;
+            $result = $user->find(
+                ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at'],
+                    'conditions' => "username = :username AND password = :password"],
+                [':username' => $username, ':password' => $password]
+            );
+            $this->responseValidation(current($result));
         }
-        $username = htmlentities($posted['username']);
-        $password = htmlentities(encrypted($posted['password']));
-        $user = new UsersModel;
-        $result = $user->find(
-            ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at'],
-                'conditions' => "username = :username AND password = :password"],
-            [':username' => $username, ':password' => $password]
-        );
-        $this->responseValidation(current($result));
     }
 
     /**
