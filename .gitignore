@@ -37,10 +37,6 @@ nbdist/
 vendor/
 composer.lock
 
-### configuration ###
-src/config/config.php
-phinx.yml
-
 ### cache ###
 tmp/cache/
 
