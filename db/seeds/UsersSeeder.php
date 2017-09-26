@@ -19,7 +19,7 @@ class UsersSeeder extends AbstractSeed
             'prenom' => 'Administrateur',
             'email' => 'admin@admin.fr',
             'username' => 'administrateur',
-            'password' => hash('sha512', md5(sha1('admin'))),
+            'password' => encrypted('admin'),
             'confirmation_token' => '',
             'confirmed' => 1,
             'registered_at' => date("Y-m-d H:i:s")
