@@ -275,6 +275,10 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
+        if (!isset($this->getPost()['deconnexion'])) {
+            $this->setToken();
+            return $this->render('logout');
+        }
         if (isValidToken()) {
             session_unset();
             session_destroy();
