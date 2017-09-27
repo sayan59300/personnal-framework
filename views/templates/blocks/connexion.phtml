@@ -2,14 +2,17 @@
 if (AUTH) {
     if (isset($_SESSION['auth']->statut) && $_SESSION['auth']->statut === 1) {
         $user = $_SESSION['auth'];
-
+        $token = generateToken();
         ?>
         <div class="connexion">
             <span class="volet"></span>
             <div class="connexion-input-block connected">
                 Connecté en tant que<br/> <?= Itval\core\Classes\Session::read('auth')->username; ?><br/>
                 <a class="btn btn-primary profil" href="<?= getUrl('profil'); ?>">Accéder à votre profil</a><br/>
-                <a class="btn btn-danger deconnexion" href="<?= getUrl('logout'); ?>">Déconnexion</a>
+                <form method="post" name="logout" action="<?= getUrl('logout'); ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $token; ?>"/>
+                    <button class="btn btn-danger deconnexion" type="submit" name="deconnexion">Déconnexion</button>
+                </form>
             </div>
         </div>
         <?php

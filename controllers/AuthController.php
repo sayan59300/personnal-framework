@@ -275,9 +275,15 @@ class AuthController extends Controller
         if (!AUTH) {
             return error404();
         }
-        session_unset();
-        session_destroy();
-        return redirect();
+        if (isValidToken()) {
+            session_unset();
+            session_destroy();
+            return redirect();
+        } else {
+            $this->emitter->emit('token.rejected');
+            error('Token invalide');
+            return redirect();
+        }
     }
 
     /**

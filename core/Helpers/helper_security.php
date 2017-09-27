@@ -99,11 +99,13 @@ function isCurrentUser(string $id): bool
 /**
  * Contrôle si le token csrf est valide
  *
+ * @param string $limit au format 'nombre unité' (unité = minutes, hours, days,...)
  * @return bool
  */
-function isValidToken(): bool
+function isValidToken(string $limit = '15 minutes'): bool
 {
-    if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token'))) {
+    if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token'))
+        && Session::read('time') >= strtotime("- $limit")) {
         return true;
     } else {
         return false;
