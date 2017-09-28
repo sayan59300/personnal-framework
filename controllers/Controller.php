@@ -1,5 +1,7 @@
 <?php
 
+namespace Itval\Controllers;
+
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Itval\core\Classes\Session;

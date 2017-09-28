@@ -21,6 +21,7 @@
   },
   "autoload": {
     "psr-4": {
+      "Itval\\Controllers\\": "Controllers/",
       "Itval\\core\\": "core/",
       "Itval\\src\\": "src/"
     }

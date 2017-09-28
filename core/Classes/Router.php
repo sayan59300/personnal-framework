@@ -56,8 +56,7 @@ class Router
     {
         $controller = $this->request->controller ?? 'none';
         if (file_exists(ROOT . DS . 'controllers' . DS . ucfirst($controller) . 'Controller' . '.php')) {
-            $controllerName = ucfirst($controller) . 'Controller';
-            include ROOT . DS . 'controllers' . DS . $controllerName . '.php';
+            $controllerName = "Itval\\Controllers\\" . ucfirst($controller) . 'Controller';
             $controller = new $controllerName($this->request);
             return $controller;
         } else {

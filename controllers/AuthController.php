@@ -1,5 +1,6 @@
 <?php
-require_once 'Controller.php';
+
+namespace Itval\Controllers;
 
 use GuzzleHttp\Psr7\Response;
 use Itval\core\Classes\FormBuilder;
@@ -7,6 +8,7 @@ use Itval\core\Classes\Session;
 use Itval\core\Classes\Validator;
 use Itval\core\Factories\LoggerFactory;
 use Itval\src\Models\UsersModel;
+use Itval\src\Traits\UsersTreatments;
 
 /**
  * Class AuthController Controlleur d'authentification
@@ -16,7 +18,7 @@ use Itval\src\Models\UsersModel;
 class AuthController extends Controller
 {
 
-    use Itval\src\Traits\UsersTreatments;
+    use UsersTreatments;
 
     /**
      * Rend la vue de connexion execute la fonction de connexion
@@ -94,7 +96,7 @@ class AuthController extends Controller
             );
             return redirect();
         }
-        Session::set('auth', new stdClass());
+        Session::set('auth', new \stdClass());
         Session::add('auth', 'statut', 1);
         Session::add('auth', 'id', $result->id);
         Session::add('auth', 'username', $result->username);
@@ -141,7 +143,7 @@ class AuthController extends Controller
         }
         $username = htmlentities($getValues['username']);
         $token = htmlentities($getValues['token']);
-        $model = new Itval\src\Models\UsersModel;
+        $model = new UsersModel();
         $user = current($model->find(['conditions' => "username = '$username' AND confirmation_token = '$token'"]));
         if (!$user) {
             return error404();
@@ -187,7 +189,7 @@ class AuthController extends Controller
                 )
             );
             $this->set('profilForm', $this->getProfilForm($user));
-            $this->set('registerAt', new DateTime($user->registered_at));
+            $this->set('registerAt', new \DateTime($user->registered_at));
             $this->set('title', 'Profil');
             return $this->render('profil');
         }
