@@ -5,7 +5,7 @@
 ### What is this repository for? ###
 
 * Basic framework PHP7 with minimal resources for web development
-* Version 3.5.1
+* Version 3.6.1
 
 ### How do I get set up? ###
 

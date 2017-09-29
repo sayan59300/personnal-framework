@@ -2,7 +2,7 @@
 <ruleset name="PHP_CodeSniffer">
     <description>Framework</description>
 
-    <file>controllers</file>
+    <file>Controllers</file>
     <file>core</file>
     <file>src</file>
     <file>tests</file>
