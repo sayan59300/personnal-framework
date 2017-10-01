@@ -18,8 +18,6 @@ use Itval\src\Traits\UsersTreatments;
 class AuthController extends Controller
 {
 
-    use UsersTreatments;
-
     /**
      * Rend la vue de connexion execute la fonction de connexion
      *
