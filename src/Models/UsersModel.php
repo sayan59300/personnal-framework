@@ -196,6 +196,26 @@ class UsersModel extends Tables
     }
 
     /**
+     * Update le mot de passe d'un utilisateur
+     *
+     * @return int
+     */
+    public function updatePassword(): int
+    {
+        $args = [
+            'fields' =>
+                [
+                    "password = :password"
+                ],
+            'conditions' => 'id = ' . $this->id
+        ];
+        $values = [
+            ':password' => $this->password
+        ];
+        return $this->amend($args, $values);
+    }
+
+    /**
      * Fonction de confirmation de compte
      *
      * @return int

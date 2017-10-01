@@ -14,5 +14,6 @@ return [
     "/confirmation" => "auth@confirmation",
     "/confirmed" => "auth@confirmed",
     "/profil" => "auth@profil",
+    "/update_password" => "auth@updatePassword",
     "/logout" => "auth@logout"
 ];

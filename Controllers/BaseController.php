@@ -59,6 +59,7 @@ class BaseController extends Controller
         if ($validator->getErrors() === 0) {
             $this->resetValuesSession($values);
             $this->emitter->emit('message.sended', [$values]);
+            return true;
         }
         $this->setValuesSession($values);
         redirect('/contact');

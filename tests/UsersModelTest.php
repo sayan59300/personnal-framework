@@ -150,14 +150,14 @@ class UsersModelTest extends TestCase
         $this->assertEquals('john.washington@usa.fr', current($user2)->email);
     }
 
-    public function testProfilUpdate()
+    public function testUpdatePassword()
     {
         $model = new UsersModel(self::$pdo);
         /** @var UsersModel $user */
         $user = current($model->find(['conditions' => "username = :username"], ['username' => 'gwashington']));
         $id = $user->id;
         $user->password = encrypted('nouveaumotdepasse');
-        $user->profilUpdate();
+        $user->updatePassword();
         $user2 = $model->find(['conditions' => "id = :id"], ['id' => $id]);
         $this->assertEquals(encrypted('nouveaumotdepasse'), current($user2)->password);
     }

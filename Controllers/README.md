@@ -5,7 +5,8 @@
 ### Format ###
 ```PHP
 <?php
-    require_once 'Controller.php';
+    
+    namespace Itval\Controllers;
     
     use GuzzleHttp\Psr7\Response;
     

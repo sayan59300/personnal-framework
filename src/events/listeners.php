@@ -29,9 +29,10 @@ $emitter->on(
         $message = new \Swift_Message('Email de confirmation suite à votre inscription sur le site ' . SITE_NAME);
         $message->setFrom(SITE_CONTACT_MAIL)
             ->setTo($user->email)
+            ->setReplyTo(SITE_CONTACT_MAIL)
             ->setBody($mail->getView(), 'text/html');
         if ($mail->send($message) === 0) {
-            LoggerFactory::getInstance()->addWarning(
+            LoggerFactory::getInstance('contact')->addWarning(
                 'Erreur lors d\'une tentative d\'envoie de message après inscription d\'un nouvel utilisateur',
                 ['username' => $user->username, 'email' => $user->email]
             );
@@ -46,6 +47,35 @@ $emitter->on(
             ['username' => $user->username, 'email' => $user->email]
         );
         success('Votre inscription a bien été enregistrée, un email de confirmation a été envoyé à votre adresse email');
+        return redirect();
+    }
+);
+
+$emitter->on(
+    'userPassword.updated',
+    function (string $username, string $email) {
+        $mail = new Email('update_password');
+        $message = new \Swift_Message('Email de notification de modification de mot de passe sur le site ' . SITE_NAME);
+        $message->setFrom(SITE_CONTACT_MAIL)
+            ->setTo($email)
+            ->setReplyTo(SITE_CONTACT_MAIL)
+            ->setBody($mail->getView(), 'text/html');
+        if ($mail->send($message) === 0) {
+            LoggerFactory::getInstance('contact')->addWarning(
+                'Erreur lors d\'une tentative d\'envoie de message après Modification de mot de passe',
+                ['username' => $username, 'email' => $email]
+            );
+            warning(
+                'Votre mot de passe a bien été modifié mais il y a eu un problème lors de l\'envoie de l\'email de confirmation, '
+                . 'en cas de problème lié à cette action, veuillez contacter l\'administrateur du site à l\'aide du formulaire de contact'
+            );
+            return redirect();
+        }
+        LoggerFactory::getInstance('users')->addInfo(
+            'Un utilisateur a modifié sont mot de passe',
+            ['username' => $username, 'email' => $email]
+        );
+        success('Votre mot de passe a bien été modifié');
         return redirect();
     }
 );

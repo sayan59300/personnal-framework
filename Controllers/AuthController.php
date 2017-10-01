@@ -131,168 +131,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Fonction de confirmation de compte utilisateur
-     *
-     * @return Response
-     */
-    public function confirmation(): Response
-    {
-        $getValues = $this->getQuery();
-        if (!isset($getValues['username']) && !isset($getValues['token'])) {
-            return error404();
-        }
-        $username = htmlentities($getValues['username']);
-        $token = htmlentities($getValues['token']);
-        $model = new UsersModel();
-        $user = current($model->find(['conditions' => "username = '$username' AND confirmation_token = '$token'"]));
-        if (!$user) {
-            return error404();
-        }
-        $user->confirmation();
-        return $this->render('confirmed');
-    }
-
-    /**
-     * Retourne la vue de confirmation de compte
-     *
-     * @return Response
-     */
-    public function confirmed(): Response
-    {
-        return $this->render('confirmed');
-    }
-
-    /**
-     * Rend le vue profil de l'utilisateur connecté, execute la fonction update du profil
-     *
-     * @return Response|bool
-     */
-    public function profil()
-    {
-        if (!isset($this->getPost()['update'])) {
-            if (!AUTH) {
-                return error404();
-            }
-            if (!isAuthenticated()) {
-                LoggerFactory::getInstance('security')->addWarning(
-                    'Tentative d\'accès à la page '
-                    . 'profil'
-                );
-                error('Vous devez être connecté pour accéder à votre profil');
-                return redirect();
-            }
-            $model = new UsersModel;
-            $user = current(
-                $model->find(
-                    ['conditions' => 'id = ' . currentUser()->id,
-                        'fields' => ['id', 'email', 'nom', 'prenom', 'username', 'registered_at', 'confirmed']]
-                )
-            );
-            $this->set('profilForm', $this->getProfilForm($user));
-            $this->set('registerAt', new \DateTime($user->registered_at));
-            $this->set('title', 'Profil');
-            return $this->render('profil');
-        }
-        $this->update();
-    }
-
-    /**
-     * Génère le formulaire du profil
-     *
-     * @param  $user
-     * @return FormBuilder
-     */
-    public function getProfilForm($user): FormBuilder
-    {
-        $form = new FormBuilder('profilForm', 'post', getUrl('profil'));
-        $form->setCsrfInput($this->setToken())
-            ->setInput('hidden', 'id', ['value' => $user->id])
-            ->setInput('text', 'nom', ['id' => 'nom', 'value' => $user->nom], 'Votre nom')
-            ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => $user->prenom], 'Votre prénom')
-            ->setInput('email', 'email', ['id' => 'email', 'value' => $user->email], 'Votre email')
-            ->setInput('text', 'username', ['id' => 'username', 'value' => $user->username], 'Votre nom d\'utilisateur')
-            ->setButton('submit', 'update', 'Mettre à jour votre profil', ['class' => 'btn btn-primary']);
-        return $form;
-    }
-
-    /**
-     * Met à jour le profil de l'utilisateur connecté
-     *
-     * @return Response|bool
-     */
-    public function update()
-    {
-        if (!AUTH) {
-            return error404();
-        }
-        if (!isValidToken()) {
-            $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
-            error('Token invalide');
-            return redirect('/profil');
-        }
-        $posted = $this->getPost();
-        $values = [
-            'profil' => true,
-            'id' => intval($posted['id']),
-            'nom' => $posted['nom'],
-            'prenom' => $posted['prenom'],
-            'email' => $posted['email'],
-            'username' => $posted['username']
-        ];
-        $validator = new Validator($values);
-        $validator->isValidInt('id');
-        $validator->isValidString('nom', ALPHABETIC, true);
-        $validator->isValidString('prenom', ALPHABETIC, true);
-        $validator->isValidEmail('email', true);
-        $validator->isValidString('username', USERNAME, true);
-        $validator->isAvailable(UsersModel::class, 'username');
-        if ($validator->getErrors() === 0) {
-            if ($values['id'] != currentUser()->id) {
-                error("L'id ne correspont pas à celui de l'utilisateur connecté");
-                LoggerFactory::getInstance('security')->addAlert("Tentative de modification d'un profil "
-                    . "avec un id invalide", ['user_id' => currentUser()->id]);
-                return redirect('/profil');
-            }
-            $user = new UsersModel;
-            $user->id = $values['id'];
-            $user->nom = $values['nom'];
-            $user->prenom = $values['prenom'];
-            $user->email = $values['email'];
-            $user->username = $values['username'];
-            $user->profilUpdate();
-            LoggerFactory::getInstance('users')->addInfo('Modification de profil', ['username' => $values['username']]);
-            success('Votre profil a été mis à jour avec succès');
-            return redirect('/profil');
-        }
-        return redirect('/profil');
-    }
-
-    /**
-     * Fonction de déconnexion
-     *
-     * @return Response|bool
-     */
-    public function logout()
-    {
-        if (!AUTH) {
-            return error404();
-        }
-        if (!isset($this->getPost()['deconnexion'])) {
-            $this->setToken();
-            return $this->render('logout');
-        }
-        if (isValidToken()) {
-            session_unset();
-            session_destroy();
-            return redirect();
-        } else {
-            $this->emitter->emit('token.rejected');
-            error('Token invalide');
-            return redirect();
-        }
-    }
-
-    /**
      * Génère le formulaire d'inscription
      *
      * @return FormBuilder
@@ -360,5 +198,226 @@ class AuthController extends Controller
         }
         $this->setValuesSession($values);
         return redirect('/registration');
+    }
+
+    /**
+     * Fonction de confirmation de compte utilisateur
+     *
+     * @return Response
+     */
+    public function confirmation(): Response
+    {
+        $getValues = $this->getQuery();
+        if (!isset($getValues['username']) && !isset($getValues['token'])) {
+            return error404();
+        }
+        $username = htmlentities($getValues['username']);
+        $token = htmlentities($getValues['token']);
+        $model = new UsersModel();
+        /** @var UsersModel $user */
+        $user = current($model->find(['conditions' => "username = '$username' AND confirmation_token = '$token'"]));
+        if (!$user) {
+            return error404();
+        }
+        $user->confirmation();
+        return $this->render('confirmed');
+    }
+
+    /**
+     * Retourne la vue de confirmation de compte
+     *
+     * @return Response
+     */
+    public function confirmed(): Response
+    {
+        return $this->render('confirmed');
+    }
+
+    /**
+     * Rend le vue profil de l'utilisateur connecté, execute la fonction update du profil
+     *
+     * @return Response|bool
+     */
+    public function profil()
+    {
+        if (!isset($this->getPost()['update'])) {
+            if (!AUTH) {
+                return error404();
+            }
+            if (!isAuthenticated()) {
+                LoggerFactory::getInstance('security')->addWarning(
+                    'Tentative d\'accès à la page '
+                    . 'profil'
+                );
+                error('Vous devez être connecté pour accéder à votre profil');
+                return redirect();
+            }
+            $model = new UsersModel;
+            /** @var UsersModel $user */
+            $user = current(
+                $model->find(
+                    ['conditions' => 'id = :id', 'fields' => ['id', 'email', 'nom', 'prenom', 'username', 'registered_at', 'confirmed']],
+                    [':id' => currentUser()->id]
+                )
+            );
+            $this->set('profilForm', $this->getProfilForm($user));
+            $this->set('registerAt', new \DateTime($user->registered_at));
+            $this->set('title', 'Profil');
+            return $this->render('profil');
+        }
+        $this->update();
+    }
+
+    /**
+     * Génère le formulaire du profil
+     *
+     * @param  $user
+     * @return FormBuilder
+     */
+    public function getProfilForm($user): FormBuilder
+    {
+        $form = new FormBuilder('profilForm', 'post', getUrl('profil'));
+        $form->setCsrfInput($this->setToken())
+            ->setInput('text', 'nom', ['id' => 'nom', 'value' => $user->nom], 'Votre nom')
+            ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => $user->prenom], 'Votre prénom')
+            ->setInput('email', 'email', ['id' => 'email', 'value' => $user->email], 'Votre email')
+            ->setInput('text', 'username', ['id' => 'username', 'value' => $user->username], 'Votre nom d\'utilisateur')
+            ->setButton('submit', 'update', 'Mettre à jour votre profil', ['class' => 'btn btn-primary']);
+        return $form;
+    }
+
+    /**
+     * Met à jour le profil de l'utilisateur connecté
+     *
+     * @return Response|bool
+     */
+    public function update()
+    {
+        if (!AUTH) {
+            return error404();
+        }
+        if (!isValidToken()) {
+            $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
+            error('Token invalide');
+            return redirect('/profil');
+        }
+        $posted = $this->getPost();
+        $values = [
+            'id' => currentUser()->id,
+            'nom' => $posted['nom'],
+            'prenom' => $posted['prenom'],
+            'email' => $posted['email'],
+            'username' => $posted['username']
+        ];
+        $validator = new Validator($values);
+        $validator->isValidString('nom', ALPHABETIC, true);
+        $validator->isValidString('prenom', ALPHABETIC, true);
+        $validator->isValidEmail('email', true);
+        $validator->isValidString('username', USERNAME, true);
+        $validator->isAvailable(UsersModel::class, 'username');
+        if ($validator->getErrors() === 0) {
+            $user = new UsersModel;
+            $user->id = $values['id'];
+            $user->nom = $values['nom'];
+            $user->prenom = $values['prenom'];
+            $user->email = $values['email'];
+            $user->username = $values['username'];
+            $user->profilUpdate();
+            LoggerFactory::getInstance('users')->addInfo('Modification de profil', ['username' => $values['username']]);
+            success('Votre profil a été mis à jour avec succès');
+            return redirect('/profil');
+        }
+        return redirect('/profil');
+    }
+
+    /**
+     * Rend le vue de modification du mot de passe de l'utilisateur connecté, fait le traitement à la soumission du formulaire
+     *
+     * @return bool|Response
+     */
+    public function updatePassword()
+    {
+        if (!AUTH) {
+            return error404();
+        }
+        if (!isAuthenticated()) {
+            LoggerFactory::getInstance('security')->addWarning(
+                'Tentative d\'accès à la page de modification de mot de passe'
+            );
+            error('Vous devez être connecté pour accéder à la page de modification de mot de passe');
+            return redirect();
+        }
+        $posted = $this->getPost();
+        if (!isset($posted['update_password'])) {
+            $form = new FormBuilder('updatePasswordForm', 'post', '');
+            $form->setCsrfInput($this->setToken())
+                ->setInput('password', 'old_password', ['id' => 'old_password'], 'Ancien mot de passe')
+                ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe')
+                ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation nouveau mot de passe')
+                ->setButton('submit', 'update_password', 'Mettre à jour votre mot de passe', ['class' => 'btn btn-primary']);
+            $this->set('updatePasswordForm', $form);
+            return $this->render('update_password');
+        }
+        if (!isValidToken()) {
+            $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
+            error('Token invalide');
+            return redirect('/update_password');
+        }
+        $values = [
+            "id" => currentUser()->id,
+            "old_password" => $posted['old_password'],
+            "password" => $posted['password'],
+            "confirm_password" => $posted['confirm_password']
+        ];
+        $model = new UsersModel;
+        /** @var UsersModel $user */
+        $user = current(
+            $model->find(
+                ['conditions' => 'id = :id', 'fields' => ['id', 'password', 'username', 'email']],
+                [':id' => $values['id']]
+            )
+        );
+        $validator = new Validator($values);
+        $validator->required('old_password');
+        $validator->isValidString('password', PASSWORD, true, 'confirm_password');
+        if (!empty($posted['old_password']) && encrypted($posted['old_password']) !== $user->password) {
+            $validator->setError('old_password', "Le mot de passe actuel est invalide");
+        }
+        if ($validator->getErrors() === 0) {
+            $user->password = encrypted($posted['password']);
+            $user->updatePassword();
+            LoggerFactory::getInstance('users')->addInfo(
+                'Modification du mot de passe',
+                ['username' => $user->username]
+            );
+            $this->emitter->emit('userPassword.updated', [$user->username, $user->email]);
+            return true;
+        }
+        return redirect('/update_password');
+    }
+
+    /**
+     * Fonction de déconnexion
+     *
+     * @return Response|bool
+     */
+    public function logout()
+    {
+        if (!AUTH) {
+            return error404();
+        }
+        if (!isset($this->getPost()['deconnexion'])) {
+            $this->setToken();
+            return $this->render('logout');
+        }
+        if (isValidToken()) {
+            session_unset();
+            session_destroy();
+            return redirect();
+        } else {
+            $this->emitter->emit('token.rejected');
+            error('Token invalide');
+            return redirect();
+        }
     }
 }
