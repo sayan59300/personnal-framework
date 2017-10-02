@@ -8,7 +8,6 @@ use Itval\core\Classes\Session;
 use Itval\core\Classes\Validator;
 use Itval\core\Factories\LoggerFactory;
 use Itval\src\Models\UsersModel;
-use Itval\src\Traits\UsersTreatments;
 
 /**
  * Class AuthController Controlleur d'authentification
