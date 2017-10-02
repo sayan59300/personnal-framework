@@ -61,7 +61,7 @@ class BaseController extends Controller
             return true;
         }
         $this->setValuesSession($values);
-        redirect('/contact');
+        return redirect('/contact');
     }
 
     /**
