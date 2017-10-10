@@ -5,10 +5,11 @@
  */
 $('.volet').click(
     function () {
-        if ($(".connexion").css('right') === '-250px') {
-            $(".connexion").css({'right': '0'});
+        $volet = $(".connexion");
+        if ($volet.css('right') === '-250px') {
+            $volet.css({'right': '0'});
         } else {
-            $(".connexion").css({'right': '-250px'});
+            $volet.css({'right': '-250px'});
         }
     }
 );
