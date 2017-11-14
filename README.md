@@ -5,7 +5,7 @@
 ### What is this repository for? ###
 
 * Basic framework PHP7 with minimal resources for web development
-* Version 3.6.1
+* Version 3.8.0
 
 ### How do I get set up? ###
 
@@ -23,6 +23,8 @@
     - swiftmailer/swiftmailer: ^6.0
     - guzzlehttp/psr7: ^1.4
     - http-interop/response-sender: ^1.0
+    - filp/whoops: ^2.1 
+    - pagerfanta/pagerfanta: ^1.0
 * Dependencies development
     - phpunit/phpunit: ^6.1
     - digitalnature/php-ref: ^1.2

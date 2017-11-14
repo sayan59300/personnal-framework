@@ -25,7 +25,7 @@ class BaseController extends Controller
     /**
      * Rend la vue contact
      *
-     * @return bool|Response
+     * @return Response
      */
     public function contact()
     {
@@ -58,7 +58,7 @@ class BaseController extends Controller
         if ($validator->getErrors() === 0) {
             $this->resetValuesSession($values);
             $this->emitter->emit('message.sended', [$values]);
-            return true;
+            return redirect('/contact');
         }
         $this->setValuesSession($values);
         return redirect('/contact');

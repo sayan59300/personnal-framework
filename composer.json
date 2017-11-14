@@ -1,7 +1,7 @@
 {
   "name": "sayan593/framework",
   "description": "framework de base",
-  "version": "3.6.1",
+  "version": "3.8.0",
   "license": "(LGPL-2.1 or GPL-3.0+)",
   "authors": [
     {
@@ -17,7 +17,9 @@
     "evenement/evenement": "^3.0",
     "swiftmailer/swiftmailer": "^6.0",
     "guzzlehttp/psr7": "^1.4",
-    "http-interop/response-sender": "^1.0"
+    "http-interop/response-sender": "^1.0",
+    "filp/whoops": "^2.1",
+    "pagerfanta/pagerfanta": "^1.0"
   },
   "autoload": {
     "psr-4": {

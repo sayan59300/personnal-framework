@@ -40,14 +40,12 @@ $emitter->on(
                 'Votre inscription a bien été enregistrée, il y a eu un problème lors de l\'envoie de l\'email de confirmation, '
                 . 'veuillez contacter l\'administrateur du site à l\'aide du formulaire de contact'
             );
-            return redirect();
         }
         LoggerFactory::getInstance('users')->addInfo(
             'Un nouvel utilisateur s\'est enregistré',
             ['username' => $user->username, 'email' => $user->email]
         );
         success('Votre inscription a bien été enregistrée, un email de confirmation a été envoyé à votre adresse email');
-        return redirect();
     }
 );
 
@@ -69,14 +67,12 @@ $emitter->on(
                 'Votre mot de passe a bien été modifié mais il y a eu un problème lors de l\'envoie de l\'email de confirmation, '
                 . 'en cas de problème lié à cette action, veuillez contacter l\'administrateur du site à l\'aide du formulaire de contact'
             );
-            return redirect();
         }
         LoggerFactory::getInstance('users')->addInfo(
             'Un utilisateur a modifié sont mot de passe',
             ['username' => $username, 'email' => $email]
         );
         success('Votre mot de passe a bien été modifié');
-        return redirect();
     }
 );
 
@@ -97,13 +93,11 @@ $emitter->on(
                 ['Email' => $values['email_contact']]
             );
             error('Problème lors de l\'envoi du message');
-            return redirect('/contact');
         }
         LoggerFactory::getInstance('contact')->addAlert(
             'Nouveau message envoyé depuis la page de contact',
             ['Email' => $values['email_contact']]
         );
         success('Votre message a bien été envoyé');
-        return redirect();
     }
 );

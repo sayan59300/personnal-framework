@@ -2,6 +2,11 @@
 
 namespace Itval\core\DAO;
 
+use GuzzleHttp\Psr7\Request;
+use Itval\src\Services\PaginationAdapter;
+use Pagerfanta\Pagerfanta;
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * Class Tables couche d'abstraction de la base de données
  *
@@ -330,6 +335,59 @@ class Tables implements \ArrayAccess
         } catch (\PDOException $e) {
             $this->catchReturn($e);
         }
+    }
+
+    /**
+     * Fonction permettant de récupérer des données paginées
+     *
+     * @param ServerRequestInterface $request
+     * @param array $args
+     * @param int $perPage
+     * @return Pagerfanta
+     */
+    public function findPaginated(ServerRequestInterface $request, array $args = [], int $perPage = 10): Pagerfanta
+    {
+        $table = $this->getTable(get_class($this));
+        $formattedFields = '*';
+        if (isset($args['fields'])) {
+            if (is_array($args['fields'])) {
+                $formattedFields = implode(',', $args['fields']);
+            }
+        }
+        if (!isset($args['join'])) {
+            $args['join'] = '';
+        }
+        if (!isset($args['conditions'])) {
+            $args['conditions'] = '';
+        }
+        if (!isset($args['group'])) {
+            $args['group'] = '';
+        }
+        if (!isset($args['order'])) {
+            $args['order'] = '';
+        }
+        $requete =
+            'SELECT ' . $formattedFields
+            . ' FROM ' . $table
+            . $args['join']
+            . $args['conditions']
+            . $args['group']
+            . $args['order'];
+        $countRequete =
+            'SELECT COUNT(id)'
+            . ' FROM ' . $table
+            . $args['join']
+            . $args['conditions'];
+        $adapter = new PaginationAdapter(
+            $this->pdo,
+            $requete,
+            $countRequete
+        );
+        $params = $request->getQueryParams();
+        $page = $params['p'] ?? 1;
+        return (new Pagerfanta($adapter))
+            ->setMaxPerPage($perPage)
+            ->setCurrentPage($page);
     }
 
     /**

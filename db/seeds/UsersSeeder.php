@@ -14,12 +14,12 @@ class UsersSeeder extends AbstractSeed
      */
     public function run()
     {
-        $data = [
+        $data[0] = [
             'nom' => 'Administrateur',
             'prenom' => 'Administrateur',
             'email' => 'admin@admin.fr',
             'username' => 'administrateur',
-            'password' => encrypted('admin'),
+            'password' => hash('sha512', md5(sha1('admin'))),
             'confirmation_token' => '',
             'confirmed' => 1,
             'registered_at' => date("Y-m-d H:i:s")

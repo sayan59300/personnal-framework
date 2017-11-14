@@ -5,6 +5,8 @@
 
 use GuzzleHttp\Psr7\Response;
 use Itval\core\Classes\Session;
+use Pagerfanta\Pagerfanta;
+use Pagerfanta\View\TwitterBootstrap3View;
 
 /**
  * Retourne une URL formattée
@@ -30,17 +32,16 @@ function getUrl(string $route, string $params = null, ...$args): string
  * Redirige vers l'url demandée
  *
  * @param  string|null $url
- * @return bool
+ * @return Response
  */
-function redirect(string $url = null): bool
+function redirect(string $url = null): Response
 {
     if (!isset($url)) {
         header('Location: ' . BASE_URL);
-        return true;
-    } else {
-        header('Location: ' . BASE_URL . $url);
-        return true;
+        return new Response(301);
     }
+    header('Location: ' . BASE_URL . $url);
+    return new Response(301);
 }
 
 /**
@@ -121,9 +122,8 @@ function printCssAssets($css): string
             $formattedCss .= $value . "\n";
         }
         return $formattedCss;
-    } else {
-        return $css;
     }
+    return $css;
 }
 
 /**
@@ -140,7 +140,21 @@ function printJsAssets($scripts): string
             $formattedScripts .= $script . "\n";
         }
         return $formattedScripts;
-    } else {
-        return $scripts;
     }
+    return $scripts;
+}
+
+/**
+ * Construit la vue de la pagination
+ *
+ * @param Pagerfanta $results
+ * @param string $route
+ * @return string
+ */
+function getPaginationView(Pagerfanta $results, string $route): string
+{
+    $view = new TwitterBootstrap3View();
+    return $view->render($results, function (int $page) use ($route) {
+        return getUrl($route, "?p=$page");
+    });
 }

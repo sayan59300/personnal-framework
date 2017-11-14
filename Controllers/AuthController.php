@@ -20,9 +20,9 @@ class AuthController extends Controller
     /**
      * Rend la vue de connexion execute la fonction de connexion
      *
-     * @return Response|bool
+     * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $posted = $this->getPost();
         if (!AUTH) {
@@ -36,17 +36,6 @@ class AuthController extends Controller
             error('Vous êtes déja connecté');
             return redirect('/profil');
         }
-        $this->connexion($posted);
-    }
-
-    /**
-     * Fonction de connexion de l'utilisateur
-     *
-     * @param  array $posted
-     * @return Response|bool
-     */
-    private function connexion(array $posted)
-    {
         if (!AUTH) {
             return error404();
         }
@@ -58,60 +47,48 @@ class AuthController extends Controller
             $username = htmlentities($posted['username']);
             $password = htmlentities(encrypted($posted['password']));
             $user = new UsersModel;
-            $result = $user->find(
+            $result = current($user->find(
                 ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at'],
                     'conditions' => "username = :username AND password = :password"],
                 [':username' => $username, ':password' => $password]
-            );
-            $this->responseValidation(current($result));
-        }
-    }
-
-    /**
-     * Fonction de contrôle de validation du compte en base de données, qui crée la session de l'utilisateur ou qui
-     * redirige vers l'accueil avec un message d'erreur si l'utilisateur n'a pas été confirmé
-     *
-     * @param  $result
-     * @return bool
-     */
-    private function responseValidation($result): bool
-    {
-        if (!$result) {
-            Session::delete('auth');
-            error('Connexion impossible, mauvais login ou mauvais mot de passe');
-            return redirect('/auth');
-        }
-        if ($result->confirmed !== '1') {
-            LoggerFactory::getInstance('security')->addWarning(
-                'Tentative de connexion avec un compte non validé',
-                ['username' => $result->username, 'email' => $result->email]
-            );
-            error(
-                'Votre compte n\'a pas encore été validé, un email a été envoyé lors de votre inscription avec un lien de 
-            confirmation, vous ne pourrez pas vous connecter avant d\'avoir terminé la procédure de validation, en cas 
-            d\'impossibilité de valider votre compte veuillez contacter l\'administrateur du site'
-            );
+            ));
+            if (!$result) {
+                Session::delete('auth');
+                error('Connexion impossible, mauvais login ou mauvais mot de passe');
+                return redirect('/auth');
+            }
+            if ($result->confirmed !== '1') {
+                LoggerFactory::getInstance('security')->addWarning(
+                    'Tentative de connexion avec un compte non validé',
+                    ['username' => $result->username, 'email' => $result->email]
+                );
+                error(
+                    'Votre compte n\'a pas encore été validé, un email a été envoyé lors de votre inscription avec un lien de 
+                    confirmation, vous ne pourrez pas vous connecter avant d\'avoir terminé la procédure de validation, en cas 
+                    d\'impossibilité de valider votre compte veuillez contacter l\'administrateur du site'
+                );
+                return redirect();
+            }
+            Session::set('auth', new \stdClass());
+            Session::add('auth', 'statut', 1);
+            Session::add('auth', 'id', $result->id);
+            Session::add('auth', 'username', $result->username);
+            Session::add('auth', 'nom', $result->nom, 'nom');
+            Session::add('auth', 'prenom', $result->prenom);
+            Session::add('auth', 'confirmed', $result->confirmed);
+            Session::add('auth', 'registered_at', date_create($result->registered_at));
+            LoggerFactory::getInstance('security')->addInfo('Connexion utilisateur', ['username' => $result->username]);
+            Session::delete('erreur_login');
             return redirect();
         }
-        Session::set('auth', new \stdClass());
-        Session::add('auth', 'statut', 1);
-        Session::add('auth', 'id', $result->id);
-        Session::add('auth', 'username', $result->username);
-        Session::add('auth', 'nom', $result->nom, 'nom');
-        Session::add('auth', 'prenom', $result->prenom);
-        Session::add('auth', 'confirmed', $result->confirmed);
-        Session::add('auth', 'registered_at', date_create($result->registered_at));
-        LoggerFactory::getInstance('security')->addInfo('Connexion utilisateur', ['username' => $result->username]);
-        Session::delete('erreur_login');
-        return redirect();
     }
 
     /**
      * Rend la vue d'enregistrement d'un nouveau compte utilisateur execute la fonction d'inscription
      *
-     * @return Response|bool
+     * @return Response
      */
-    public function register()
+    public function register(): Response
     {
         if (!AUTH) {
             return error404();
@@ -124,36 +101,6 @@ class AuthController extends Controller
             $this->set('registrationForm', $this->getRegisterForm());
             return $this->render('registration');
         }
-        $this->registration();
-    }
-
-    /**
-     * Génère le formulaire d'inscription
-     *
-     * @return FormBuilder
-     */
-    private function getRegisterForm(): FormBuilder
-    {
-        $form = new FormBuilder('subscribeForm', 'post', getUrl('registration'));
-        $form->setCsrfInput($this->setToken())
-            ->setInput('text', 'nom', ['id' => 'nom', 'value' => printSession('nom')], 'Nom')
-            ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => printSession('prenom')], 'Prénom')
-            ->setInput('email', 'email', ['id' => 'email', 'value' => printSession('email')], 'Email')
-            ->setInput('email', 'confirm_email', ['id' => 'confirm_email', 'autocomplete' => 'off'], 'Confirmation email')
-            ->setInput('text', 'username', ['id' => 'username', 'value' => printSession('username')], 'Nom d\'utilisateur')
-            ->setInput('password', 'password', ['id' => 'password'], 'Mot de passe')
-            ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation mot de passe')
-            ->setButton('submit', 'inscription', 'Valider votre inscription', ['class' => 'btn btn-primary']);
-        return $form;
-    }
-
-    /**
-     * Fonction de contrôle des données et d'enregistrement de l'inscription dans la base de données
-     *
-     * @return Response|bool
-     */
-    private function registration()
-    {
         if (!AUTH) {
             return error404();
         }
@@ -191,10 +138,30 @@ class AuthController extends Controller
             $user->setConfirmationToken()->setRegisteredAt();
             $user->save();
             $this->emitter->emit('user.registered', [$user]);
-            return true;
+            return redirect();
         }
         $this->setValuesSession($values);
         return redirect('/registration');
+    }
+
+    /**
+     * Génère le formulaire d'inscription
+     *
+     * @return FormBuilder
+     */
+    private function getRegisterForm(): FormBuilder
+    {
+        $form = new FormBuilder('subscribeForm', 'post', getUrl('registration'));
+        $form->setCsrfInput($this->setToken())
+            ->setInput('text', 'nom', ['id' => 'nom', 'value' => printSession('nom')], 'Nom')
+            ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => printSession('prenom')], 'Prénom')
+            ->setInput('email', 'email', ['id' => 'email', 'value' => printSession('email')], 'Email')
+            ->setInput('email', 'confirm_email', ['id' => 'confirm_email', 'autocomplete' => 'off'], 'Confirmation email')
+            ->setInput('text', 'username', ['id' => 'username', 'value' => printSession('username')], 'Nom d\'utilisateur')
+            ->setInput('password', 'password', ['id' => 'password'], 'Mot de passe')
+            ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation mot de passe')
+            ->setButton('submit', 'inscription', 'Valider votre inscription', ['class' => 'btn btn-primary']);
+        return $form;
     }
 
     /**
@@ -233,9 +200,9 @@ class AuthController extends Controller
     /**
      * Rend le vue profil de l'utilisateur connecté, execute la fonction update du profil
      *
-     * @return Response|bool
+     * @return Response
      */
-    public function profil()
+    public function profil(): Response
     {
         if (!isset($this->getPost()['update'])) {
             if (!AUTH) {
@@ -262,34 +229,6 @@ class AuthController extends Controller
             $this->set('title', 'Profil');
             return $this->render('profil');
         }
-        $this->update();
-    }
-
-    /**
-     * Génère le formulaire du profil
-     *
-     * @param  $user
-     * @return FormBuilder
-     */
-    public function getProfilForm($user): FormBuilder
-    {
-        $form = new FormBuilder('profilForm', 'post', getUrl('profil'));
-        $form->setCsrfInput($this->setToken())
-            ->setInput('text', 'nom', ['id' => 'nom', 'value' => $user->nom], 'Votre nom')
-            ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => $user->prenom], 'Votre prénom')
-            ->setInput('email', 'email', ['id' => 'email', 'value' => $user->email], 'Votre email')
-            ->setInput('text', 'username', ['id' => 'username', 'value' => $user->username], 'Votre nom d\'utilisateur')
-            ->setButton('submit', 'update', 'Mettre à jour votre profil', ['class' => 'btn btn-primary']);
-        return $form;
-    }
-
-    /**
-     * Met à jour le profil de l'utilisateur connecté
-     *
-     * @return Response|bool
-     */
-    public function update()
-    {
         if (!AUTH) {
             return error404();
         }
@@ -328,11 +267,29 @@ class AuthController extends Controller
     }
 
     /**
+     * Génère le formulaire du profil
+     *
+     * @param  $user
+     * @return FormBuilder
+     */
+    public function getProfilForm($user): FormBuilder
+    {
+        $form = new FormBuilder('profilForm', 'post', getUrl('profil'));
+        $form->setCsrfInput($this->setToken())
+            ->setInput('text', 'nom', ['id' => 'nom', 'value' => $user->nom], 'Votre nom')
+            ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => $user->prenom], 'Votre prénom')
+            ->setInput('email', 'email', ['id' => 'email', 'value' => $user->email], 'Votre email')
+            ->setInput('text', 'username', ['id' => 'username', 'value' => $user->username], 'Votre nom d\'utilisateur')
+            ->setButton('submit', 'update', 'Mettre à jour votre profil', ['class' => 'btn btn-primary']);
+        return $form;
+    }
+
+    /**
      * Rend le vue de modification du mot de passe de l'utilisateur connecté, fait le traitement à la soumission du formulaire
      *
-     * @return bool|Response
+     * @return Response
      */
-    public function updatePassword()
+    public function updatePassword(): Response
     {
         if (!AUTH) {
             return error404();
@@ -388,7 +345,7 @@ class AuthController extends Controller
                 ['username' => $user->username]
             );
             $this->emitter->emit('userPassword.updated', [$user->username, $user->email]);
-            return true;
+            return redirect();
         }
         return redirect('/update_password');
     }
@@ -396,9 +353,9 @@ class AuthController extends Controller
     /**
      * Fonction de déconnexion
      *
-     * @return Response|bool
+     * @return Response
      */
-    public function logout()
+    public function logout(): Response
     {
         if (!AUTH) {
             return error404();
@@ -411,10 +368,9 @@ class AuthController extends Controller
             session_unset();
             session_destroy();
             return redirect();
-        } else {
-            $this->emitter->emit('token.rejected');
-            error('Token invalide');
-            return redirect();
         }
+        $this->emitter->emit('token.rejected');
+        error('Token invalide');
+        return redirect();
     }
 }

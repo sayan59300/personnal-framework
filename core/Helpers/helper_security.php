@@ -1,7 +1,6 @@
 <?php
 /* * *************** * */
 /* * HELPER SECURITY * */
-
 /* * *************** * */
 
 use Itval\core\Classes\Session;
@@ -31,21 +30,6 @@ function random_token(int $length = 74): string
 }
 
 /**
- * Ecrit si l'utilisateur à vérifié son compte en fonction de la réponse passée en argument
- *
- * @param  string $value
- * @return string
- */
-function printConfirm(string $value): string
-{
-    if ($value == '1') {
-        return 'Oui';
-    } else {
-        return 'Non';
-    }
-}
-
-/**
  * Retourne l'utilisateur connecté
  *
  * @return stdClass|null
@@ -68,7 +52,6 @@ function generateToken(): string
     return $token;
 }
 
-
 /**
  * Vérifie que la session d'authentification existe et qu'un utilisateur est connecté
  *
@@ -78,9 +61,8 @@ function isAuthenticated(): bool
 {
     if (currentUser() && currentUser()->statut === 1) {
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 /**
@@ -94,6 +76,7 @@ function isCurrentUser(string $id): bool
     if (currentUser()->id === $id) {
         return true;
     }
+    return false;
 }
 
 /**
@@ -107,7 +90,6 @@ function isValidToken(string $limit = '15 minutes'): bool
     if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token'))
         && Session::read('time') >= strtotime("- $limit")) {
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
