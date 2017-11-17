@@ -15,10 +15,6 @@
         
     }
 ```
-
-### Test pour la base de données ###
-Les tests sont réalisés sur une base de données testDatabase sur le même serveur que la base de production.
-
 ### Exemple pour le modèle UsersModel ###
 Ces 2 méthodes doivent être présentes pour chaque modèle à tester, le table sera créée pour les tests puis supprimée à la fin de ceux ci.
 ```PHP

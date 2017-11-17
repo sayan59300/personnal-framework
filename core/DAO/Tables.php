@@ -343,9 +343,9 @@ class Tables implements \ArrayAccess
      * @param ServerRequestInterface $request
      * @param array $args
      * @param int $perPage
-     * @return Pagerfanta
+     * @return Pagerfanta|null
      */
-    public function findPaginated(ServerRequestInterface $request, array $args = [], int $perPage = 10): Pagerfanta
+    public function findPaginated(ServerRequestInterface $request, array $args = [], int $perPage = 10): ?Pagerfanta
     {
         $table = $this->getTable(get_class($this));
         $formattedFields = '*';
@@ -385,9 +385,13 @@ class Tables implements \ArrayAccess
         );
         $params = $request->getQueryParams();
         $page = $params['p'] ?? 1;
-        return (new Pagerfanta($adapter))
-            ->setMaxPerPage($perPage)
-            ->setCurrentPage($page);
+        try {
+            return (new Pagerfanta($adapter))
+                ->setMaxPerPage($perPage)
+                ->setCurrentPage($page);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
