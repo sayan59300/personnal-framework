@@ -159,12 +159,12 @@ class UsersModel extends Tables
                 'conditions' => 'id = ' . $this->id
             ],
             [
-                ':nom' => $this->nom,
-                ':prenom' => $this->prenom,
-                ':email' => $this->email,
-                ':username' => $this->username,
-                ':confirmation_token' => $this->confirmation_token,
-                ':confirmed' => $this->confirmed,
+                'nom' => $this->nom,
+                'prenom' => $this->prenom,
+                'email' => $this->email,
+                'username' => $this->username,
+                'confirmation_token' => $this->confirmation_token,
+                'confirmed' => $this->confirmed,
             ]
         );
     }
@@ -187,10 +187,10 @@ class UsersModel extends Tables
             'conditions' => 'id = ' . $this->id
         ];
         $values = [
-            ':nom' => $this->nom,
-            ':prenom' => $this->prenom,
-            ':email' => $this->email,
-            ':username' => $this->username,
+            'nom' => $this->nom,
+            'prenom' => $this->prenom,
+            'email' => $this->email,
+            'username' => $this->username,
         ];
         return $this->amend($args, $values);
     }
@@ -210,7 +210,7 @@ class UsersModel extends Tables
             'conditions' => 'id = ' . $this->id
         ];
         $values = [
-            ':password' => $this->password
+            'password' => $this->password
         ];
         return $this->amend($args, $values);
     }
