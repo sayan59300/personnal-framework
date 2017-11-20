@@ -2,11 +2,9 @@
 
 namespace Itval\core\DAO;
 
-use GuzzleHttp\Psr7\Request;
 use Itval\src\Services\PaginationAdapter;
 use Pagerfanta\Pagerfanta;
-use Psr\Http\Message\ServerRequestInterface;
-
+use Slim\Http\Request;
 /**
  * Class Tables couche d'abstraction de la base de données
  *
@@ -340,12 +338,12 @@ class Tables implements \ArrayAccess
     /**
      * Fonction permettant de récupérer des données paginées
      *
-     * @param ServerRequestInterface $request
+     * @param Request $request
      * @param array $args
      * @param int $perPage
      * @return Pagerfanta|null
      */
-    public function findPaginated(ServerRequestInterface $request, array $args = [], int $perPage = 10): ?Pagerfanta
+    public function findPaginated(Request $request, array $args = [], int $perPage = 10): ?Pagerfanta
     {
         $table = $this->getTable(get_class($this));
         $formattedFields = '*';
