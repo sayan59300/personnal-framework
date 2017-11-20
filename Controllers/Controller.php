@@ -2,10 +2,12 @@
 
 namespace Itval\Controllers;
 
-use GuzzleHttp\Psr7\Response;
-use Psr\Http\Message\ServerRequestInterface;
 use Itval\core\Classes\Session;
 use Itval\core\Factories\EventFactory;
+use Slim\Container;
+use Slim\Http\Request;
+use Slim\Http\Response;
+use Slim\Http\UploadedFile;
 
 /**
  * Class Controller Controlleur principal
@@ -46,14 +48,14 @@ class Controller
     /**
      * Valeurs de $_FILE
      *
-     * @var \GuzzleHttp\Psr7\UploadedFile[]
+     * @var UploadedFile[]
      */
     private $_file;
 
     /**
      * Request
      *
-     * @var ServerRequestInterface
+     * @var Request
      */
     private $request;
 
@@ -65,20 +67,28 @@ class Controller
     private $vars = [];
 
     /**
+     * Container de dépendances
+     *
+     * @var Container
+     */
+    protected $container;
+
+    /**
      * Controller constructor.
      *
-     * @param ServerRequestInterface $request
+     * @param Container $container
      */
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(Container $container)
     {
         extract($this->vars);
-        $this->request = $request;
         date_default_timezone_set("Europe/Berlin");
+        $this->container = $container;
+        $this->request = $container->request;
         $this->emitter = EventFactory::getInstance();
-        $this->_post = $request->getParsedBody();
-        $this->_query = $request->getQueryParams();
-        $this->_cookie = $request->getCookieParams();
-        $this->_file = $request->getUploadedFiles();
+        $this->_post = $container->request->getParsedBody();
+        $this->_query = $container->request->getQueryParams();
+        $this->_cookie = $container->request->getCookieParams();
+        $this->_file = $container->request->getUploadedFiles();
     }
 
     /**
@@ -114,7 +124,7 @@ class Controller
     /**
      * Retourne le tableau $_FILE
      *
-     * @return \GuzzleHttp\Psr7\UploadedFile[]
+     * @return UploadedFile[]
      */
     public function getFile(): array
     {
@@ -124,9 +134,9 @@ class Controller
     /**
      * Retourne la requète
      *
-     * @return ServerRequestInterface
+     * @return Request
      */
-    public function getRequest(): ServerRequestInterface
+    public function getRequest(): Request
     {
         return $this->request;
     }
@@ -141,8 +151,9 @@ class Controller
     {
         $response = new Response();
         extract($this->vars);
-        $view = ROOT . DS . 'views' . DS . $this->request->controller . DS . $viewName . '.phtml';
-        if (file_exists(ROOT . DS . 'views' . DS . $this->request->controller . DS . $viewName . '.phtml')) {
+        $viewDir = $this->getViewDir();
+        $view = ROOT . DS . 'views' . DS . $viewDir . DS . $viewName . '.phtml';
+        if (file_exists(ROOT . DS . 'views' . DS . $viewDir . DS . $viewName . '.phtml')) {
             ob_start();
             include $view;
             $contentForBody = ob_get_clean();
@@ -154,7 +165,7 @@ class Controller
             $this->resetValidationSession();
             return $response;
         }
-        return error404();
+        return error404($response);
     }
 
     /**
@@ -236,5 +247,19 @@ class Controller
                 Session::delete($key);
             }
         }
+    }
+
+    /**
+     * Retourne le nom du dossier des vues en fonction du controlleur appelé
+     *
+     * @return string
+     */
+    private function getViewDir()
+    {
+        $controller = get_called_class();
+        $explodeArray = explode('\\', $controller);
+        $controllerName = end($explodeArray);
+        $dirnameExplode = explode('Controller', $controllerName);
+        return $dir = strtolower($dirnameExplode[0]);
     }
 }

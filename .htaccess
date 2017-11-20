@@ -1,5 +1,0 @@
-Options +FollowSymLinks
-Options -Indexes +MultiViews
-RewriteEngine On
-RewriteBase /
-RewriteRule ^(.*)$ public/index.php?/$1 [QSA,L]

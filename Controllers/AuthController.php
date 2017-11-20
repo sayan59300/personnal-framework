@@ -2,7 +2,8 @@
 
 namespace Itval\Controllers;
 
-use GuzzleHttp\Psr7\Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Itval\core\Classes\FormBuilder;
 use Itval\core\Classes\Session;
 use Itval\core\Classes\Validator;
@@ -20,25 +21,34 @@ class AuthController extends Controller
     /**
      * Rend la vue de connexion execute la fonction de connexion
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function index(): Response
+    public function index(Request $request, Response $response, $args): Response
     {
-        $posted = $this->getPost();
-        if (!AUTH) {
-            return error404();
-        }
-        if (!isset($posted['connexion']) && !isAuthenticated()) {
-            $this->setToken();
-            return $this->render('index');
-        }
         if (isAuthenticated()) {
             error('Vous êtes déja connecté');
             return redirect('/profil');
         }
-        if (!AUTH) {
-            return error404();
+        if ($this->getRequest()->isGet() && !isAuthenticated()) {
+            $this->setToken();
+            return $this->render('index');
         }
+    }
+
+    /**
+     * Traite les données et execute le procédure de connexion
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     */
+    public function connexion(Request $request, Response $response, $args)
+    {
+        $posted = $this->getPost();
         if (!isValidToken()) {
             $this->emitter->emit('token.rejected');
             error('Token invalide');
@@ -52,11 +62,6 @@ class AuthController extends Controller
                     'conditions' => "username = :username AND password = :password"],
                 [':username' => $username, ':password' => $password]
             ));
-            if (!$result) {
-                Session::delete('auth');
-                error('Connexion impossible, mauvais login ou mauvais mot de passe');
-                return redirect('/auth');
-            }
             if ($result->confirmed !== '1') {
                 LoggerFactory::getInstance('security')->addWarning(
                     'Tentative de connexion avec un compte non validé',
@@ -68,6 +73,11 @@ class AuthController extends Controller
                     d\'impossibilité de valider votre compte veuillez contacter l\'administrateur du site'
                 );
                 return redirect();
+            }
+            if (!$result) {
+                Session::delete('auth');
+                error('Connexion impossible, mauvais login ou mauvais mot de passe');
+                return redirect('/auth');
             }
             Session::set('auth', new \stdClass());
             Session::add('auth', 'statut', 1);
@@ -84,15 +94,15 @@ class AuthController extends Controller
     }
 
     /**
-     * Rend la vue d'enregistrement d'un nouveau compte utilisateur execute la fonction d'inscription
+     * Rend la vue d'enregistrement d'un nouveau compte utilisateur
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function register(): Response
+    public function register(Request $request, Response $response, $args): Response
     {
-        if (!AUTH) {
-            return error404();
-        }
         if (isAuthenticated()) {
             error('Vous êtes déjà connecté, veuillez vous déconnecter pour faire une nouvelle inscription sur le site');
             return redirect();
@@ -101,9 +111,18 @@ class AuthController extends Controller
             $this->set('registrationForm', $this->getRegisterForm());
             return $this->render('registration');
         }
-        if (!AUTH) {
-            return error404();
-        }
+    }
+
+    /**
+     * Traite les données et execute la procédure d'enregistrement
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     */
+    public function registration(Request $request, Response $response, $args): Response
+    {
         if (!isValidToken()) {
             $this->emitter->emit('token.rejected');
             error('Token invalide');
@@ -167,13 +186,16 @@ class AuthController extends Controller
     /**
      * Fonction de confirmation de compte utilisateur
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function confirmation(): Response
+    public function confirmation(Request $request, Response $response, $args): Response
     {
         $getValues = $this->getQuery();
         if (!isset($getValues['username']) && !isset($getValues['token'])) {
-            return error404();
+            return error404($response);
         }
         $username = htmlentities($getValues['username']);
         $token = htmlentities($getValues['token']);
@@ -181,57 +203,54 @@ class AuthController extends Controller
         /** @var UsersModel $user */
         $user = current($model->find(['conditions' => "username = '$username' AND confirmation_token = '$token'"]));
         if (!$user) {
-            return error404();
+            return error404($response);
         }
         $user->confirmation();
         return $this->render('confirmed');
     }
 
     /**
-     * Retourne la vue de confirmation de compte
+     * Rend le vue profil de l'utilisateur connecté
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function confirmed(): Response
+    public function profil(Request $request, Response $response, $args): Response
     {
-        return $this->render('confirmed');
+        if (!isAuthenticated()) {
+            LoggerFactory::getInstance('security')->addWarning(
+                'Tentative d\'accès à la page '
+                . 'profil'
+            );
+            error('Vous devez être connecté pour accéder à votre profil');
+            return redirect();
+        }
+        $model = new UsersModel;
+        /** @var UsersModel $user */
+        $user = current(
+            $model->find(
+                ['conditions' => 'id = :id', 'fields' => ['id', 'email', 'nom', 'prenom', 'username', 'registered_at', 'confirmed']],
+                [':id' => currentUser()->id]
+            )
+        );
+        $this->set('profilForm', $this->getProfilForm($user));
+        $this->set('registerAt', new \DateTime($user->registered_at));
+        $this->set('title', 'Profil');
+        return $this->render('profil');
     }
 
     /**
-     * Rend le vue profil de l'utilisateur connecté, execute la fonction update du profil
+     * Traite les données et met à jour le profil
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function profil(): Response
+    public function updateProfil(Request $request, Response $response, $args): Response
     {
-        if (!isset($this->getPost()['update'])) {
-            if (!AUTH) {
-                return error404();
-            }
-            if (!isAuthenticated()) {
-                LoggerFactory::getInstance('security')->addWarning(
-                    'Tentative d\'accès à la page '
-                    . 'profil'
-                );
-                error('Vous devez être connecté pour accéder à votre profil');
-                return redirect();
-            }
-            $model = new UsersModel;
-            /** @var UsersModel $user */
-            $user = current(
-                $model->find(
-                    ['conditions' => 'id = :id', 'fields' => ['id', 'email', 'nom', 'prenom', 'username', 'registered_at', 'confirmed']],
-                    [':id' => currentUser()->id]
-                )
-            );
-            $this->set('profilForm', $this->getProfilForm($user));
-            $this->set('registerAt', new \DateTime($user->registered_at));
-            $this->set('title', 'Profil');
-            return $this->render('profil');
-        }
-        if (!AUTH) {
-            return error404();
-        }
         if (!isValidToken()) {
             $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
             error('Token invalide');
@@ -285,15 +304,15 @@ class AuthController extends Controller
     }
 
     /**
-     * Rend le vue de modification du mot de passe de l'utilisateur connecté, fait le traitement à la soumission du formulaire
+     * Rend le vue de modification du mot de passe de l'utilisateur connecté
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function updatePassword(): Response
+    public function updatePassword(Request $request, Response $response, $args): Response
     {
-        if (!AUTH) {
-            return error404();
-        }
         if (!isAuthenticated()) {
             LoggerFactory::getInstance('security')->addWarning(
                 'Tentative d\'accès à la page de modification de mot de passe'
@@ -301,22 +320,32 @@ class AuthController extends Controller
             error('Vous devez être connecté pour accéder à la page de modification de mot de passe');
             return redirect();
         }
-        $posted = $this->getPost();
-        if (!isset($posted['update_password'])) {
-            $form = new FormBuilder('updatePasswordForm', 'post', '');
-            $form->setCsrfInput($this->setToken())
-                ->setInput('password', 'old_password', ['id' => 'old_password'], 'Ancien mot de passe')
-                ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe')
-                ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation nouveau mot de passe')
-                ->setButton('submit', 'update_password', 'Mettre à jour votre mot de passe', ['class' => 'btn btn-primary']);
-            $this->set('updatePasswordForm', $form);
-            return $this->render('update_password');
-        }
+        $form = new FormBuilder('updatePasswordForm', 'post', '');
+        $form->setCsrfInput($this->setToken())
+            ->setInput('password', 'old_password', ['id' => 'old_password'], 'Ancien mot de passe')
+            ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe')
+            ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation nouveau mot de passe')
+            ->setButton('submit', 'update_password', 'Mettre à jour votre mot de passe', ['class' => 'btn btn-primary']);
+        $this->set('updatePasswordForm', $form);
+        return $this->render('update_password');
+    }
+
+    /**
+     * Traite les données et met à jours le mot de passe
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     */
+    public function passwordUpdate(Request $request, Response $response, $args): Response
+    {
         if (!isValidToken()) {
             $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
             error('Token invalide');
             return redirect('/update_password');
         }
+        $posted = $this->getPost();
         $values = [
             "id" => currentUser()->id,
             "old_password" => $posted['old_password'],
@@ -353,17 +382,30 @@ class AuthController extends Controller
     /**
      * Fonction de déconnexion
      *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
      * @return Response
      */
-    public function logout(): Response
+    public function deconnexion(Request $request, Response $response, $args): Response
     {
-        if (!AUTH) {
-            return error404();
+        if (!isAuthenticated()) {
+            return redirect();
         }
-        if (!isset($this->getPost()['deconnexion'])) {
-            $this->setToken();
-            return $this->render('logout');
-        }
+        $this->setToken();
+        return $this->render('logout');
+    }
+
+    /**
+     * Déconnecte l'utilisateur connecté
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     */
+    public function logout(Request $request, Response $response, $args): Response
+    {
         if (isValidToken()) {
             session_unset();
             session_destroy();

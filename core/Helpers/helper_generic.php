@@ -3,10 +3,10 @@
 /* * HELPER GENERIC * */
 /* * ************** * */
 
-use GuzzleHttp\Psr7\Response;
 use Itval\core\Classes\Session;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\View\TwitterBootstrap3View;
+use Slim\Http\Response;
 
 /**
  * Retourne une URL formattée
@@ -47,27 +47,29 @@ function redirect(string $url = null): Response
 /**
  * Retourne la reponse avec le body et le statut de l'erreur 403
  *
+ * @param Response $response
  * @return Response
  */
-function denied(): Response
+function denied(Response $response): Response
 {
     ob_start();
     include ROOT . DS . 'views' . DS . 'errors' . DS . '403.phtml';
     $body = ob_get_clean();
-    return new Response(403, [], $body);
+    return $response->withStatus(403)->write($body);
 }
 
 /**
  * Retourne la reponse avec le body et le statut de l'erreur 404
  *
+ * @param Response $response
  * @return Response
  */
-function error404(): Response
+function error404(Response $response): Response
 {
     ob_start();
     include ROOT . DS . 'views' . DS . 'errors' . DS . '404.phtml';
     $body = ob_get_clean();
-    return new Response(404, [], $body);
+    return $response->withStatus(404)->write($body);
 }
 
 /**

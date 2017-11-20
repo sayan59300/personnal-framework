@@ -14,10 +14,6 @@ require_once ROOT . DS . 'vendor' . DS . 'autoload.php';
 /* configuration */
 autoLoader(ROOT . DS . 'src' . DS . 'config' . DS);
 
-/* routing */
-define('ROUTES', require_once ROOT . DS . 'src' . DS . 'routing' . DS . 'routing.php');
-define('PARAMETERS', require_once ROOT . DS . 'src' . DS . 'routing' . DS . 'parameters.php');
-
 /* helpers */
 autoLoader(ROOT . DS . 'core' . DS . 'helpers' . DS);
 

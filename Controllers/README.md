@@ -8,7 +8,8 @@
     
     namespace Itval\Controllers;
     
-    use GuzzleHttp\Psr7\Response;
+    use Slim\Http\Request;
+    use Slim\Http\Response;
     
     /**
      * Class NameController Description
@@ -17,6 +18,17 @@
      */
     class NameController extends Controller
     {
-        
+        /**
+         * Rend la vue index
+         *
+         * @param Request $request
+         * @param Response $response
+         * @param $args
+         * @return Response
+         */
+        public function index(Request $request, Response $response, $args): Response
+        {
+            return $this->render('index');
+        }
     }
 ```

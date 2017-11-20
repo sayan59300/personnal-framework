@@ -1,20 +1,16 @@
 <?php
 
-use Itval\core\Classes\Asset;
-
 if (VERSION === 'dev') {
-    echo Asset::getAssetJs('jquery.js');
-    echo Asset::getAssetJs('bootstrap.min.js');
-    echo Asset::getAssetJs('bootstrap-toggle.min.js');
+    echo '<script src="/resources/js/jquery.js"></script>';
+    echo '<script src="/resources/js/bootstrap.min.js"></script>';
+    echo '<script src="/resources/js/bootstrap-toggle.min.js"></script>';
 } else {
-    echo Asset::getAssetJs('https://code.jquery.com/jquery-3.1.1.min.js'
-        , true, ['integrity' => 'sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=',
-            'crossorigin' => 'anonymous']);
-    echo Asset::getAssetJs('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
-        , true, ['integrity' => 'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa',
-            'crossorigin' => 'anonymous']);
-    echo Asset::getAssetJs('https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js', true);
+    echo '<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" 
+    crossorigin="anonymous"></script>';
+    echo '<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
+    crossorigin="anonymous"></script>';
+    echo '<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>';
 }
-echo Asset::getAssetJs('ckeditor/ckeditor.js');
-echo Asset::getAssetJs('functions.js');
+echo '<script src="/resources/js/ckeditor/ckeditor.js"></script>';
+echo '<script src="/resources/js/functions.js"></script>';
 echo printJsAssets($scripts ?? '');

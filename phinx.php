@@ -19,13 +19,13 @@ return [
         ],
         'development' => [
             'adapter' => 'mysql',
-            'host' => '127.0.0.1',
-            'name' => 'sayan593_dev',
+            'host' => 'localhost',
+            'name' => 'development_db',
             'user' => 'root',
-            'pass' => 'root',
-            'port' => 8889,
+            'pass' => '',
+            'port' => 3306,
             'charset' => 'utf8',
-            'unix_sowket' => '/Applications/MAMP/tmp/mysql/mysql.sock'
+            'unix_sowket' => '/path/mysql.sock'
         ]
     ]
 ];

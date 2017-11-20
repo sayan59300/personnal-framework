@@ -49,6 +49,9 @@ $emitter->on(
     }
 );
 
+/**
+ * Ecouteur de l'évènement émit si un utilisateur modifie son mot de passe
+ */
 $emitter->on(
     'userPassword.updated',
     function (string $username, string $email) {
