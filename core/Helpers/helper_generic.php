@@ -157,6 +157,6 @@ function getPaginationView(Pagerfanta $results, string $route): string
 {
     $view = new TwitterBootstrap3View();
     return $view->render($results, function (int $page) use ($route) {
-        return getUrl($route, "?p=$page");
+        return getUrl($route) . "?p=$page";
     });
 }
