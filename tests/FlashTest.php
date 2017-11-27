@@ -8,6 +8,11 @@ require_once 'components.php';
 class FlashTest extends TestCase
 {
 
+    /**
+     * @var Flash
+     */
+    private $flash;
+
     public function setUp()
     {
         $this->flash = Flash::getInstance();

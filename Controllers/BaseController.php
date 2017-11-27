@@ -25,6 +25,11 @@ class BaseController extends Controller
      */
     public function index(Request $request, Response $response, $args): Response
     {
+        ob_start();
+        require ROOT . DS . 'composer.json';
+        $encode = ob_get_clean();
+        $json = json_decode($encode);
+        $this->set('version', $json->{"version"});
         return $this->render('index');
     }
 

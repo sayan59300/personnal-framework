@@ -62,6 +62,11 @@ class AuthController extends Controller
                     'conditions' => "username = :username AND password = :password"],
                 [':username' => $username, ':password' => $password]
             ));
+            if (!$result) {
+                Session::delete('auth');
+                error('Connexion impossible, mauvais login ou mauvais mot de passe');
+                return redirect('/auth');
+            }
             if ($result->confirmed !== '1') {
                 LoggerFactory::getInstance('security')->addWarning(
                     'Tentative de connexion avec un compte non validé',
@@ -73,11 +78,6 @@ class AuthController extends Controller
                     d\'impossibilité de valider votre compte veuillez contacter l\'administrateur du site'
                 );
                 return redirect();
-            }
-            if (!$result) {
-                Session::delete('auth');
-                error('Connexion impossible, mauvais login ou mauvais mot de passe');
-                return redirect('/auth');
             }
             Session::set('auth', new \stdClass());
             Session::add('auth', 'statut', 1);
