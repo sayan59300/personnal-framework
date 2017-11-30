@@ -5,7 +5,7 @@
 ### What is this repository for? ###
 
 * Basic framework PHP7 with minimal resources for web development
-* Version 4.1.0 (old version Accessiwork ver.3.8.0)
+* Version 4.1.1 (old version Accessiwork ver.3.8.0)
 * Licence (LGPL-2.1 or GPL-3.0+)
 
 ### How do I get set up? ###
@@ -26,6 +26,7 @@
     - swiftmailer/swiftmailer: ^6.0
     - pagerfanta/pagerfanta: ^1.0
     - slim/slim: ^3.9
+    - zeuxisoo/slim-whoops: 0.6.*
 * Development dependencies
     - phpunit/phpunit: ^6.1
     - squizlabs/php_codesniffer: 3.*
