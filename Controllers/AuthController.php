@@ -34,6 +34,8 @@ class AuthController extends Controller
         }
         if ($this->getRequest()->isGet() && !isAuthenticated()) {
             $this->setToken();
+            $this->set('title', 'Connexion');
+            $this->set('description', 'Page de connexion');
             return $this->render('index');
         }
     }
@@ -108,6 +110,8 @@ class AuthController extends Controller
             return redirect();
         }
         if (!isset($this->getPost()['inscription'])) {
+            $this->set('title', 'Enregistrement');
+            $this->set('description', 'Page d\'enregistrement permettant de créer un compte');
             $this->set('registrationForm', $this->getRegisterForm());
             return $this->render('registration');
         }
@@ -206,6 +210,8 @@ class AuthController extends Controller
             return error404($response);
         }
         $user->confirmation();
+        $this->set('title', 'Confirmation');
+        $this->set('description', 'Confirmation de création de votre compte');
         return $this->render('confirmed');
     }
 
@@ -238,6 +244,7 @@ class AuthController extends Controller
         $this->set('profilForm', $this->getProfilForm($user));
         $this->set('registerAt', new \DateTime($user->registered_at));
         $this->set('title', 'Profil');
+        $this->set('description', 'Profil de l\'utilisateur connecté');
         return $this->render('profil');
     }
 
@@ -327,6 +334,8 @@ class AuthController extends Controller
             ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation nouveau mot de passe')
             ->setButton('submit', 'update_password', 'Mettre à jour votre mot de passe', ['class' => 'btn btn-primary']);
         $this->set('updatePasswordForm', $form);
+        $this->set('title', 'Modification du mot de passe');
+        $this->set('description', 'Page de modification de votre mot de passe');
         return $this->render('update_password');
     }
 
@@ -393,6 +402,8 @@ class AuthController extends Controller
             return redirect();
         }
         $this->setToken();
+        $this->set('title', 'Déconnexion');
+        $this->set('description', 'Page de déconnexion');
         return $this->render('logout');
     }
 

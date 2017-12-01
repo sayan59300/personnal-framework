@@ -2,7 +2,6 @@
     <div class="col-md-12">
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
           <span class="navbar-brand">
             <img alt="Brand" src="/resources/images/icone.png">
@@ -16,19 +15,24 @@
                     </button>
                     <div class="navbar-brand"><?= TITLE; ?></div>
                 </div>
-                <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
-                        <li<?= isActiveLink(); ?>><a href="<?= BASE_URL; ?>"><span
-                                        class="glyphicon glyphicon-home" aria-hidden="true"></span> Accueil</a></li>
-                        <li><a href="#">Lien</a></li>
-                        <li><a href="#">Lien</a></li>
-                        <li><a href="#">Lien</a></li>
-                        <li<?= isActiveLink(getUrl('contact')); ?>><a href="<?= getUrl('contact'); ?>"><span
-                                        class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact</a></li>
+                        <li<?= isActiveLink(); ?>>
+                            <a href="<?= BASE_URL; ?>" title="Accueil du site <?= SITE_NAME; ?>">
+                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Accueil
+                            </a>
+                        </li>
+                        <li><a href="#" title="">Lien</a></li>
+                        <li><a href="#" title="">Lien</a></li>
+                        <li><a href="#" title="">Lien</a></li>
+                        <li<?= isActiveLink(getUrl('contact')); ?>>
+                            <a href="<?= getUrl('contact'); ?>" title="Page de contact">
+                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact
+                            </a>
+                        </li>
                     </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
+                </div>
+            </div>
         </nav>
     </div>
 </div>

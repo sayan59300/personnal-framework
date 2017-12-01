@@ -44,6 +44,7 @@ class BaseController extends Controller
     public function contact(Request $request, Response $response, $args): Response
     {
         $this->set('title', 'Contact');
+        $this->set('description', 'Ce formulaire de contact permet de communiquer avec l\'équipe du site ' . SITE_NAME);
         $this->set('contactForm', $this->getContactForm());
         $this->set('scripts', "<script>CKEDITOR.replace( 'message_contact', {'height': '400'} );</script>");
         return $this->render('contact');
@@ -98,7 +99,8 @@ class BaseController extends Controller
      */
     public function mentions(Request $request, Response $response, $args): Response
     {
-        $this->set('title', 'Mentions Légales');
+        $this->set('title', 'Mentions légales');
+        $this->set('description', 'Mentions légales ' . SITE_NAME);
         return $this->render('mentions');
     }
 
