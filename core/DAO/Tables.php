@@ -131,6 +131,7 @@ class Tables implements \ArrayAccess
      *
      * @param  int $limit nombre de résultats souhaités
      * @return array
+     * @throws QueryException
      */
     public function findLast(int $limit = 1): array
     {
@@ -153,6 +154,7 @@ class Tables implements \ArrayAccess
      *
      * @param  int $limit nombre de résultats souhaités
      * @return array
+     * @throws QueryException
      */
     public function findFirst(int $limit = 1): array
     {
@@ -177,6 +179,7 @@ class Tables implements \ArrayAccess
      * qui seront misent dans le WHERE / join = array contenant les jointures (INNER JOIN ou LEFT JOIN)
      * @param array $values
      * @return array
+     * @throws QueryException
      */
     public function find(array $args = [], array $values = []): array
     {
@@ -265,6 +268,7 @@ class Tables implements \ArrayAccess
      * @param  string $field colonne ciblée
      * @param  string $value valeur à vérifier
      * @return bool
+     * @throws QueryException
      */
     public function isAvailable(string $field, string $value): bool
     {
