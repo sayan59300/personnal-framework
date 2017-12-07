@@ -2,6 +2,7 @@
 
 namespace Itval\core\Classes;
 
+use Itval\core\DAO\Exception\QueryException;
 use Itval\core\DAO\Tables;
 use Itval\core\Factories\LoggerFactory;
 use Itval\src\Models\UsersModel;
@@ -52,7 +53,7 @@ class Validator
      *
      * @param string $key
      * @param bool $required
-     * @param string $confirmation
+     * @param string|null $confirmation
      * @return bool
      */
     public function isValidEmail(string $key, bool $required = false, string $confirmation = null)
@@ -96,28 +97,32 @@ class Validator
     }
 
     /**
-     * Retourne le message pour les champs invalides
-     *
-     * @return string
-     */
-    private function invalidValue()
-    {
-        return "La valeur entrée n'est pas valide";
-    }
-
-    /**
      * Contrôle la validité d'un string en fonction du regex en arguments et sa confirmation si nécessaire
      *
      * @param string $key
-     * @param  string $regex
+     * @param string $regex
      * @param bool $required
-     * @param string $confirmation
+     * @param string|null $confirmation
+     * @param int|null $minSize
+     * @param int|null $maxSize
      * @return bool
      */
-    public function isValidString(string $key, string $regex, bool $required = false, string $confirmation = null)
+    public function isValidString(string $key, string $regex, bool $required = false, string $confirmation = null, int $minSize = null, int $maxSize = null)
     {
         if ($required) {
             if ($this->required($key) === false) {
+                return false;
+            }
+        }
+        if ($minSize) {
+            if (strlen($this->values[$key]) < $minSize) {
+                $this->errors[$key] = $this->tooShortValue($minSize);
+                return false;
+            }
+        }
+        if ($maxSize) {
+            if (strlen($this->values[$key]) > $maxSize) {
+                $this->errors[$key] = $this->tooLongValue($maxSize);
                 return false;
             }
         }
@@ -200,6 +205,7 @@ class Validator
      * @param string $model
      * @param string $field
      * @return bool
+     * @throws QueryException
      */
     public function isAvailable(string $model, string $field)
     {
@@ -257,5 +263,37 @@ class Validator
     {
         $this->errors[$field] = $message;
         Session::set('validator_error_' . $field, " * $message");
+    }
+
+    /**
+     * Retourne le message pour les champs invalides
+     *
+     * @return string
+     */
+    private function invalidValue()
+    {
+        return "La valeur entrée n'est pas valide";
+    }
+
+    /**
+     * Retourne le message pour les champs ou la valeur maximale est limitée en nombre de caratères
+     *
+     * @param int $size
+     * @return string
+     */
+    private function tooLongValue(int $size)
+    {
+        return "La valeur entrée est trop longue : maximum $size caractère(s)";
+    }
+
+    /**
+     * Retourne le message pour les champs ou la valeur minimale est limitée en nombre de caratères
+     *
+     * @param int $size
+     * @return string
+     */
+    private function tooShortValue(int $size)
+    {
+        return "La valeur entrée est trop courte : minimum $size caractère(s)";
     }
 }

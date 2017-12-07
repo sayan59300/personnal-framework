@@ -31,6 +31,7 @@ class OrmTest extends TestCase
 
     /**
      * SELECT
+     * @throws QueryException
      */
     public function testQueryWithWrongType()
     {
@@ -38,12 +39,18 @@ class OrmTest extends TestCase
         $this->model->getQuery('mauvais');
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithoutFields()
     {
         $requete = $this->model->getQuery('select');
         $this->assertEquals('SELECT * FROM tests', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithJoin()
     {
         $requete = $this->model->getQuery(
@@ -62,12 +69,18 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT * FROM tests INNER JOIN users,LEFT JOIN coms', $requete2);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFields()
     {
         $requete = $this->model->getQuery('select', ['fields' => ['id','nom','description','contenu']]);
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsConditions()
     {
         $requete = $this->model->getQuery(
@@ -80,6 +93,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests WHERE id = :id', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsConditionsGroupBy()
     {
         $requete = $this->model->getQuery(
@@ -93,6 +109,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests WHERE id = :id GROUP BY nom', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsConditionsGroupByOrderBy()
     {
         $requete = $this->model->getQuery(
@@ -107,6 +126,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests WHERE id = :id GROUP BY nom ORDER BY nom DESC', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsConditionsGroupByOrderByLimit()
     {
         $requete = $this->model->getQuery(
@@ -133,6 +155,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests WHERE id = :id GROUP BY nom ORDER BY nom DESC LIMIT 0,3', $requete2);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsConditionsGroupByOrderByLimitJoin()
     {
         $requete = $this->model->getQuery(
@@ -161,6 +186,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT tests.id,tests.nom,tests.description,tests.contenu FROM tests INNER JOIN users,LEFT JOIN coms WHERE tests.id = :id AND users.id = :user_id AND coms.nom = :nom GROUP BY users.nom ORDER BY users.nom DESC LIMIT 3', $requete2);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsGroupBy()
     {
         $requete = $this->model->getQuery(
@@ -173,6 +201,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests GROUP BY nom', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsOrderBy()
     {
         $requete = $this->model->getQuery(
@@ -185,6 +216,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests ORDER BY nom DESC', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testSelectQueryWithFieldsLimit()
     {
         $requete = $this->model->getQuery(
@@ -199,6 +233,7 @@ class OrmTest extends TestCase
 
     /**
      * LAST
+     * @throws QueryException
      */
     public function testLastQuery()
     {
@@ -206,6 +241,9 @@ class OrmTest extends TestCase
         $this->assertEquals('SELECT * FROM tests ORDER BY id DESC LIMIT 1', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function testLastQueryWithLimit()
     {
         $requete = $this->model->getQuery('last', [], 3);
@@ -217,10 +255,16 @@ class OrmTest extends TestCase
      */
     public function tesFirstQuery()
     {
-        $requete = $this->model->getQuery('first', [], 1);
+        try {
+            $requete = $this->model->getQuery('first', [], 1);
+        } catch (QueryException $e) {
+        }
         $this->assertEquals('SELECT * FROM tests ORDER BY id ASC LIMIT 1', $requete);
     }
 
+    /**
+     * @throws QueryException
+     */
     public function tesFirstQueryWithLimit()
     {
         $requete = $this->model->getQuery('first', [], 3);

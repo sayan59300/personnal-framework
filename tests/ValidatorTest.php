@@ -240,6 +240,46 @@ class ValidatorTest extends TestCase
         $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_phrase18']);
     }
 
+    public function testIsValidStringMinSize()
+    {
+        $validator = new Validator(
+            [
+                'username1' => 'usee593',
+                'username2' => 'Urne-59300',
+                'username3' => 'Username59300',
+                'username4' => 'Username-59300'
+            ]
+        );
+        $validator->isValidString('username1', ALPHANUMERIC, false, null, 3);
+        $validator->isValidString('username2', ALPHANUMERIC, false, null, 5);
+        $validator->isValidString('username3', ALPHANUMERIC, false, null, 20);
+        $validator->isValidString('username4', ALPHANUMERIC, false, null, 30);
+        $this->assertEquals(3, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_username2']);
+        $this->assertEquals(' * La valeur entrée est trop courte : minimum 20 caractère(s)', $_SESSION['validator_error_username3']);
+        $this->assertEquals(' * La valeur entrée est trop courte : minimum 30 caractère(s)', $_SESSION['validator_error_username4']);
+    }
+
+    public function testIsValidStringMaxSize()
+    {
+        $validator = new Validator(
+            [
+                'username1' => 'usee593',
+                'username2' => 'Urne-59300',
+                'username3' => 'Username59300',
+                'username4' => 'Username-59300'
+            ]
+        );
+        $validator->isValidString('username1', ALPHANUMERIC, false, null, null, 10);
+        $validator->isValidString('username2', ALPHANUMERIC, false, null, null, 10);
+        $validator->isValidString('username3', ALPHANUMERIC, false, null, null, 10);
+        $validator->isValidString('username4', ALPHANUMERIC, false, null, null, 12);
+        $this->assertEquals(3, $validator->getErrors());
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_username2']);
+        $this->assertEquals(' * La valeur entrée est trop longue : maximum 10 caractère(s)', $_SESSION['validator_error_username3']);
+        $this->assertEquals(' * La valeur entrée est trop longue : maximum 12 caractère(s)', $_SESSION['validator_error_username4']);
+    }
+
     public function testIsValidStringAlphanumeric()
     {
         $validator = new Validator(

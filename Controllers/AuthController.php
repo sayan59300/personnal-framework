@@ -2,6 +2,7 @@
 
 namespace Itval\Controllers;
 
+use Itval\core\DAO\Exception\QueryException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Itval\core\Classes\FormBuilder;
@@ -47,6 +48,7 @@ class AuthController extends Controller
      * @param Response $response
      * @param $args
      * @return Response
+     * @throws QueryException
      */
     public function connexion(Request $request, Response $response, $args)
     {
@@ -124,6 +126,7 @@ class AuthController extends Controller
      * @param Response $response
      * @param $args
      * @return Response
+     * @throws QueryException
      */
     public function registration(Request $request, Response $response, $args): Response
     {
@@ -194,6 +197,7 @@ class AuthController extends Controller
      * @param Response $response
      * @param $args
      * @return Response
+     * @throws QueryException
      */
     public function confirmation(Request $request, Response $response, $args): Response
     {
@@ -222,6 +226,7 @@ class AuthController extends Controller
      * @param Response $response
      * @param $args
      * @return Response
+     * @throws QueryException
      */
     public function profil(Request $request, Response $response, $args): Response
     {
@@ -255,6 +260,7 @@ class AuthController extends Controller
      * @param Response $response
      * @param $args
      * @return Response
+     * @throws QueryException
      */
     public function updateProfil(Request $request, Response $response, $args): Response
     {
@@ -346,6 +352,7 @@ class AuthController extends Controller
      * @param Response $response
      * @param $args
      * @return Response
+     * @throws QueryException
      */
     public function passwordUpdate(Request $request, Response $response, $args): Response
     {
