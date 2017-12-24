@@ -91,7 +91,7 @@ class ValidatorTest extends TestCase
 
     public function testIsValidStringWithRequiredAndInvalidValue()
     {
-        $validator = new Validator(['nom' => 'ertkj-sdf45', 'username' => 'sdfsdf03']);
+        $validator = new Validator(['nom' => 'ertkj,sdf45', 'username' => 'sdfsdf_03']);
         $validator->isValidString('nom', ALPHABETIC, true);
         $validator->isValidString('username', ALPHABETIC, true);
         $this->assertEquals(2, $validator->getErrors());

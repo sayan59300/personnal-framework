@@ -80,6 +80,36 @@ $emitter->on(
 );
 
 /**
+ * Ecouteur de l'évènement émit si un utilisateur demande à réinitialiser son mot de passe
+ */
+$emitter->on(
+    'user.resetPassword',
+    function (UsersModel $user) {
+        $mail = new Email('reset_password', ['id' => $user->id, 'reset_password_token' => $user->reset_password_token]);
+        $message = new \Swift_Message('Email de réinitialisation de mot de passe suite à votre demande sur le site ' . SITE_NAME);
+        $message->setFrom(SITE_CONTACT_MAIL)
+            ->setTo($user->email)
+            ->setReplyTo(SITE_CONTACT_MAIL)
+            ->setBody($mail->getView(), 'text/html');
+        if ($mail->send($message) === 0) {
+            LoggerFactory::getInstance('contact')->addWarning(
+                'Erreur lors d\'une tentative d\'envoie de message après demande de réinitialisation de mot de passe',
+                ['username' => $user->username, 'email' => $user->email]
+            );
+            warning(
+                'Votre demande a bien été enregistrée, il y a eu un problème lors de l\'envoie de l\'email de réinitialisation de mot de passe, '
+                . 'veuillez contacter l\'administrateur du site à l\'aide du formulaire de contact'
+            );
+        }
+        LoggerFactory::getInstance('users')->addInfo(
+            'Un utilisateur a demandé à réinitialiser son mot de passe',
+            ['username' => $user->username, 'email' => $user->email]
+        );
+        success('Votre demande a bien été enregistrée, un email de réinitialisation a été envoyé à votre adresse email');
+    }
+);
+
+/**
  * Ecouteur de l'évènement émit si un message est envoyé
  */
 $emitter->on(

@@ -33,10 +33,13 @@ class CreateUsersTable extends AbstractMigration
             ->addColumn("email", "string")
             ->addColumn("username", "string")
             ->addColumn("password", "string")
-            ->addColumn("confirmation_token", "string")
+            ->addColumn("confirmation_token", "string", ['null' => true])
             ->addColumn("confirmed", "integer")
-            ->addColumn("registered_at", "date")
+            ->addColumn("registered_at", "datetime")
+            ->addColumn("reset_password_token", "string", ['null' => true])
+            ->addColumn("reseted_at", "string", ['null' => true])
             ->addIndex(['username'], ['unique' => true])
+            ->addIndex(['email'], ['unique' => true])
             ->create();
     }
 }

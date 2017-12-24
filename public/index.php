@@ -12,7 +12,12 @@ if (version_compare(PHP_VERSION, "7.1") === -1) {
 }
 
 session_start();
-define('BASE_URL', 'http://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
+define('SSL', false);
+if (SSL) {
+    define('BASE_URL', 'https://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
+} else {
+    define('BASE_URL', 'http://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
+}
 define('PUBLIC_ROOT', dirname(__FILE__));
 define('ROOT', dirname(PUBLIC_ROOT));
 define('DS', DIRECTORY_SEPARATOR);
@@ -95,8 +100,12 @@ if (AUTH) {
     $app->get('/profil', AuthController::class . ':profil');
     $app->post('/profil', AuthController::class . ':updateProfil');
     /* mise à jour du mot de passe */
-    $app->get('/update_password', AuthController::class . ':updatePassword');
-    $app->post('/update_password', AuthController::class . ':passwordUpdate');
+    $app->get('/update-password', AuthController::class . ':updatePassword');
+    $app->post('/update-password', AuthController::class . ':passwordUpdate');
+    $app->get('/reset-password', AuthController::class . ':vueResetPassword');
+    $app->post('/reset-password', AuthController::class . ':sendResetPasswordEmail');
+    $app->get('/reset-password-confirmation', AuthController::class. ':resetPasswordConfirmation');
+    $app->post('/reset-password-confirmation', AuthController::class. ':resetPasswordConfirmation');
     /* deconnexion */
     $app->get('/logout', AuthController::class . ':deconnexion');
     $app->post('/logout', AuthController::class . ':logout');

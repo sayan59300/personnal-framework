@@ -13,7 +13,7 @@ use Itval\core\Classes\Session;
  */
 function encrypted(string $value): string
 {
-    return hash('sha512', md5(sha1($value)));
+    return password_hash($value, PASSWORD_BCRYPT);
 }
 
 /**

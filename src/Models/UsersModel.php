@@ -58,7 +58,7 @@ class UsersModel extends Tables
     /**
      * Token de confirmation envoyé par email pour confirmation d'inscription
      *
-     * @var string
+     * @var string|null
      */
     public $confirmation_token;
 
@@ -75,6 +75,20 @@ class UsersModel extends Tables
      * @var string
      */
     public $registered_at;
+
+    /**
+     * Token de réinitalisation de mot de passe
+     *
+     * @var string|null
+     */
+    public $reset_password_token;
+
+    /**
+     * Date de demande de réinitalisation de mot de passe
+     *
+     * @var string|null
+     */
+    public $reseted_at;
 
     public function __construct(\PDO $pdo = null)
     {
@@ -105,6 +119,17 @@ class UsersModel extends Tables
     }
 
     /**
+     * Setter $reseted_at
+     *
+     * @return UsersModel
+     */
+    public function setResetedAt(): self
+    {
+        $this->reseted_at = date("Y-m-d H:i:s");
+        return $this;
+    }
+
+    /**
      * Sauvegarde un utilisateur dans la base de données
      *
      * @return int
@@ -122,7 +147,9 @@ class UsersModel extends Tables
                         'password',
                         'confirmation_token',
                         'confirmed',
-                        'registered_at'
+                        'registered_at',
+                        'reset_password_token',
+                        'reseted_at'
                     ]
             ],
             [
@@ -133,7 +160,9 @@ class UsersModel extends Tables
                 'password' => $this->password,
                 'confirmation_token' => $this->confirmation_token,
                 'confirmed' => $this->confirmed,
-                'registered_at' => $this->registered_at
+                'registered_at' => $this->registered_at,
+                'reset_password_token' => null,
+                'reseted_at' => null
             ]
         );
     }
@@ -225,8 +254,44 @@ class UsersModel extends Tables
         $values = [
             'fields' =>
                 [
-                    "confirmation_token = ''",
+                    "confirmation_token = NULL",
                     "confirmed = '1'"
+                ],
+            'conditions' => 'id = ' . $this->id
+        ];
+        return $this->amend($values);
+    }
+
+    /**
+     * Fonction qui ajoute le token et la date de demande de réinitialisation de mot de passe
+     *
+     * @return int
+     */
+    public function updateResetPassword(): int
+    {
+        $values = [
+            'fields' =>
+                [
+                    "reset_password_token = '{$this->reset_password_token}'",
+                    "reseted_at = '{$this->reseted_at}'"
+                ],
+            'conditions' => 'id = ' . $this->id
+        ];
+        return $this->amend($values);
+    }
+
+    /**
+     * Fonction qui permet de mettre à jour le mot de passe et de supprimer le reset_password_token pour débloquer le compte
+     *
+     * @return int
+     */
+    public function resetPassword(): int
+    {
+        $values = [
+            'fields' =>
+                [
+                    "password = '{$this->password}'",
+                    "reset_password_token = NULL",
                 ],
             'conditions' => 'id = ' . $this->id
         ];

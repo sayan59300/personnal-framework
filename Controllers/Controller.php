@@ -83,7 +83,6 @@ class Controller
         extract($this->vars);
         date_default_timezone_set("Europe/Berlin");
         $this->container = $container;
-        $this->request = $container->request;
         $this->emitter = EventFactory::getInstance();
         $this->_post = $container->request->getParsedBody();
         $this->_query = $container->request->getQueryParams();
@@ -129,16 +128,6 @@ class Controller
     public function getFile(): array
     {
         return $this->_file;
-    }
-
-    /**
-     * Retourne la requète
-     *
-     * @return Request
-     */
-    public function getRequest(): Request
-    {
-        return $this->request;
     }
 
     /**

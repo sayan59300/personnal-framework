@@ -2,6 +2,7 @@
 
 namespace Itval\Controllers;
 
+use DateTime;
 use Itval\core\DAO\Exception\QueryException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -33,12 +34,10 @@ class AuthController extends Controller
             error('Vous êtes déja connecté');
             return redirect('/profil');
         }
-        if ($this->getRequest()->isGet() && !isAuthenticated()) {
-            $this->setToken();
-            $this->set('title', 'Connexion');
-            $this->set('description', 'Page de connexion');
-            return $this->render('index');
-        }
+        $this->setToken();
+        $this->set('title', 'Connexion');
+        $this->set('description', 'Page de connexion');
+        return $this->render('index');
     }
 
     /**
@@ -50,7 +49,7 @@ class AuthController extends Controller
      * @return Response
      * @throws QueryException
      */
-    public function connexion(Request $request, Response $response, $args)
+    public function connexion(Request $request, Response $response, $args): Response
     {
         $posted = $this->getPost();
         if (!isValidToken()) {
@@ -58,17 +57,18 @@ class AuthController extends Controller
             error('Token invalide');
             return redirect();
         } else {
-            $username = htmlentities($posted['username']);
-            $password = htmlentities(encrypted($posted['password']));
+            $username = $posted['username'];
+            $password = $posted['password'];
             $user = new UsersModel;
+            /** @var UsersModel $result */
             $result = current($user->find(
-                ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at'],
-                    'conditions' => "username = :username AND password = :password"],
-                [':username' => $username, ':password' => $password]
+                ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at', 'password', 'reset_password_token'],
+                    'conditions' => "username = :username"],
+                [':username' => $username]
             ));
-            if (!$result) {
+            if (!$result || password_verify($password, $result->password) === false) {
                 Session::delete('auth');
-                error('Connexion impossible, mauvais login ou mauvais mot de passe');
+                error('Connexion impossible, mauvais nom d\'utilisateur ou mauvais mot de passe');
                 return redirect('/auth');
             }
             if ($result->confirmed !== '1') {
@@ -83,11 +83,23 @@ class AuthController extends Controller
                 );
                 return redirect();
             }
+            if (!is_null($result->reset_password_token)) {
+                LoggerFactory::getInstance('security')->addWarning(
+                    'Tentative de connexion à un compte qui a une procédure de réinitialisation en cours',
+                    ['username' => $result->username, 'email' => $result->email]
+                );
+                error(
+                    'Une procédure de réinitialisation de mot de passe est en cours, votre compte a été bloqué '
+                    . 'le temps que finalisiez la procédure, en cas de problème réitérez l\'opération ou contactez '
+                    . 'l\'administrateur du site'
+                );
+                return redirect();
+            }
             Session::set('auth', new \stdClass());
             Session::add('auth', 'statut', 1);
             Session::add('auth', 'id', $result->id);
             Session::add('auth', 'username', $result->username);
-            Session::add('auth', 'nom', $result->nom, 'nom');
+            Session::add('auth', 'nom', $result->nom);
             Session::add('auth', 'prenom', $result->prenom);
             Session::add('auth', 'confirmed', $result->confirmed);
             Session::add('auth', 'registered_at', date_create($result->registered_at));
@@ -111,12 +123,10 @@ class AuthController extends Controller
             error('Vous êtes déjà connecté, veuillez vous déconnecter pour faire une nouvelle inscription sur le site');
             return redirect();
         }
-        if (!isset($this->getPost()['inscription'])) {
-            $this->set('title', 'Enregistrement');
-            $this->set('description', 'Page d\'enregistrement permettant de créer un compte');
-            $this->set('registrationForm', $this->getRegisterForm());
-            return $this->render('registration');
-        }
+        $this->set('title', 'Enregistrement');
+        $this->set('description', 'Page d\'enregistrement permettant de créer un compte');
+        $this->set('registrationForm', $this->getRegisterForm());
+        return $this->render('registration');
     }
 
     /**
@@ -146,12 +156,13 @@ class AuthController extends Controller
             'confirm_password' => $posted['confirm_password']
         ];
         $validator = new Validator($values);
-        $validator->isValidString('nom', ALPHABETIC, true);
-        $validator->isValidString('prenom', ALPHABETIC, true);
+        $validator->isValidString('nom', DENOMINATION, true);
+        $validator->isValidString('prenom', DENOMINATION, true);
         $validator->isValidEmail('email', true, 'confirm_email');
         $validator->isValidString('username', USERNAME, true);
         $validator->isAvailable(UsersModel::class, 'username');
-        $validator->isValidString('password', PASSWORD, true, 'confirm_password');
+        $validator->isAvailable(UsersModel::class, 'email');
+        $validator->isValidString('password', PASSWORD, true, 'confirm_password', 8, 72);
         if ($validator->getErrors() === 0) {
             $this->resetValuesSession($values);
             $user = new UsersModel;
@@ -202,7 +213,7 @@ class AuthController extends Controller
     public function confirmation(Request $request, Response $response, $args): Response
     {
         $getValues = $this->getQuery();
-        if (!isset($getValues['username']) && !isset($getValues['token'])) {
+        if (!isset($getValues['username']) || !isset($getValues['token'])) {
             return error404($response);
         }
         $username = htmlentities($getValues['username']);
@@ -232,8 +243,7 @@ class AuthController extends Controller
     {
         if (!isAuthenticated()) {
             LoggerFactory::getInstance('security')->addWarning(
-                'Tentative d\'accès à la page '
-                . 'profil'
+                'Tentative d\'accès à la page profil'
             );
             error('Vous devez être connecté pour accéder à votre profil');
             return redirect();
@@ -247,7 +257,7 @@ class AuthController extends Controller
             )
         );
         $this->set('profilForm', $this->getProfilForm($user));
-        $this->set('registerAt', new \DateTime($user->registered_at));
+        $this->set('registerAt', new DateTime($user->registered_at));
         $this->set('title', 'Profil');
         $this->set('description', 'Profil de l\'utilisateur connecté');
         return $this->render('profil');
@@ -278,11 +288,12 @@ class AuthController extends Controller
             'username' => $posted['username']
         ];
         $validator = new Validator($values);
-        $validator->isValidString('nom', ALPHABETIC, true);
-        $validator->isValidString('prenom', ALPHABETIC, true);
+        $validator->isValidString('nom', DENOMINATION, true);
+        $validator->isValidString('prenom', DENOMINATION, true);
         $validator->isValidEmail('email', true);
         $validator->isValidString('username', USERNAME, true);
         $validator->isAvailable(UsersModel::class, 'username');
+        $validator->isAvailable(UsersModel::class, 'email');
         if ($validator->getErrors() === 0) {
             $user = new UsersModel;
             $user->id = $values['id'];
@@ -299,12 +310,148 @@ class AuthController extends Controller
     }
 
     /**
+     * Rend la vue de réinitialisation de mot de passe
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     */
+    public function vueResetPassword(Request $request, Response $response, $args): Response
+    {
+        if (isAuthenticated()) {
+            return redirect('/profil');
+        }
+        $this->setToken();
+        $this->set('title', 'Réinitialisation de votre mot de passe');
+        $this->set('description', 'Page de demande de réinitialisation de votre mot de passe');
+        return $this->render('reset_password');
+    }
+
+    /**
+     * Permet de réinitialiser le mot de passe
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     * @throws QueryException
+     */
+    public function sendResetPasswordEmail(Request $request, Response $response, $args): Response
+    {
+        if (!isValidToken()) {
+            $this->emitter->emit('token.rejected');
+            error('Token invalide');
+            return redirect();
+        }
+        $email = $this->getPost()['email'];
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            error("Veuillez entrer un email valide");
+            return redirect('/reset-password');
+        }
+        $model = new UsersModel();
+        /** @var UsersModel $user */
+        $user = current($model->find(['conditions' => 'email = :email'], ['email' => $email]));
+        if (!$user) {
+            error("Aucun compte ne correspont à cette email");
+            return redirect('/reset-password');
+        }
+        $user->reset_password_token = random_token();
+        $user->setResetedAt();
+        $user->updateResetPassword();
+        $this->emitter->emit('user.resetPassword', [$user]);
+        return redirect();
+    }
+
+    /**
+     * Rend la vue de confirmation de réinitialisation du mot de passe
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return Response
+     * @throws QueryException
+     */
+    public function resetPasswordConfirmation(Request $request, Response $response, $args): Response
+    {
+        $params = $this->getQuery();
+        if (isAuthenticated()) {
+            LoggerFactory::getInstance('security')->addWarning(
+                'Tentative d\'accès à la page de réinitialisation de mot de passe avec un utilisateur connecté',
+                ['username' => currentUser()->username]
+            );
+            error('Vous ne pouvez pas accéder à cette page si vous êtes connecté');
+            return redirect();
+        }
+        if ($request->isPost()) {
+            $posted = $this->getPost();
+            $values = [
+                'password' => $posted['password'],
+                'password_confirmation' => $posted['password_confirmation']
+            ];
+            $validator = new Validator($values);
+            $validator->isValidString('password', PASSWORD, true, 'password_confirmation', 8, 72);
+            if ($validator->getErrors() === 0) {
+                $model = new UsersModel();
+                /** @var UsersModel $user */
+                $user = current($model->find(
+                    ['conditions' => 'id = :id AND reset_password_token = :reset_token'],
+                    ['id' => $params['id'], 'reset_token' => $params['reset_token']]
+                ));
+                if (!$user) {
+                    LoggerFactory::getInstance('database')->addWarning(
+                        'Erreur lors de la recherche d\'un utilisateur lors d\'une procédure de réinitialisation de mot de passe',
+                        ['id' => $params['id'], 'reset_token' => $params['reset_token']]
+                    );
+                    error('impossible de trouver l\'utilisateur correspondant');
+                    return redirect();
+                }
+                $user->password = encrypted($values['password']);
+                $user->resetPassword();
+                success("Votre mot de passe à bien été mis à jour");
+                return redirect();
+            }
+            return redirect('/reset-password-confirmation?id=' . $params['id'] . '&reset_token=' . $params['reset_token']);
+        }
+        if (!isset($params['id']) || !isset($params['reset_token'])) {
+            return error404($response);
+        }
+        $model = new UsersModel();
+        /** @var UsersModel $user */
+        $user = current($model->find(
+            ['conditions' => 'id = :id AND reset_password_token = :reset_token'],
+            ['id' => $params['id'], 'reset_token' => $params['reset_token']]
+        ));
+        if (!$user) {
+            LoggerFactory::getInstance('security')->addWarning(
+                'Tentative d\'accès à la page de réinitialisation de mot de passe avec un lien invalide',
+                ['id' => $params['id']]
+            );
+            error('Le lien de réinitialisation est invalide');
+            return redirect();
+        }
+        $form = new FormBuilder(
+            'reset_password_form',
+            'post',
+            getUrl('reset-password-confirmation?id=' . $params['id'] . '&reset_token=' . $params['reset_token'])
+        );
+        $form->setCsrfInput($this->setToken())
+            ->setInput('password', 'password', [], 'Nouveau mot de passe (entre 8 et 72 caractères)')
+            ->setInput('password', 'password_confirmation', [], 'Confirmer le nouveau mot de passe')
+            ->setButton('submit', 'reset_password', 'Modifier votre mot de passe', ['class' => 'btn btn-primary']);
+        $this->set('title', 'Réinitialisation de votre mot de passe');
+        $this->set('description', 'Page de confirmation de la réinitialisation de votre mot de passe');
+        $this->set('reset_password_form', $form);
+        return $this->render('reset_password_confirmation');
+    }
+
+    /**
      * Génère le formulaire du profil
      *
-     * @param  $user
+     * @param  UsersModel $user
      * @return FormBuilder
      */
-    public function getProfilForm($user): FormBuilder
+    public function getProfilForm(UsersModel $user): FormBuilder
     {
         $form = new FormBuilder('profilForm', 'post', getUrl('profil'));
         $form->setCsrfInput($this->setToken())
@@ -336,7 +483,7 @@ class AuthController extends Controller
         $form = new FormBuilder('updatePasswordForm', 'post', '');
         $form->setCsrfInput($this->setToken())
             ->setInput('password', 'old_password', ['id' => 'old_password'], 'Ancien mot de passe')
-            ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe')
+            ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe (entre 8 et 72 caractères)')
             ->setInput('password', 'confirm_password', ['id' => 'confirm_password'], 'Confirmation nouveau mot de passe')
             ->setButton('submit', 'update_password', 'Mettre à jour votre mot de passe', ['class' => 'btn btn-primary']);
         $this->set('updatePasswordForm', $form);
@@ -359,7 +506,7 @@ class AuthController extends Controller
         if (!isValidToken()) {
             $this->emitter->emit('token.rejected', [['username' => Session::read('auth')->username ?? 'Anonymous']]);
             error('Token invalide');
-            return redirect('/update_password');
+            return redirect('/update-password');
         }
         $posted = $this->getPost();
         $values = [
@@ -378,8 +525,8 @@ class AuthController extends Controller
         );
         $validator = new Validator($values);
         $validator->required('old_password');
-        $validator->isValidString('password', PASSWORD, true, 'confirm_password');
-        if (!empty($posted['old_password']) && encrypted($posted['old_password']) !== $user->password) {
+        $validator->isValidString('password', PASSWORD, true, 'confirm_password', 8, 72);
+        if (!empty($posted['old_password']) && !password_verify($posted['old_password'], $user->password)) {
             $validator->setError('old_password', "Le mot de passe actuel est invalide");
         }
         if ($validator->getErrors() === 0) {
@@ -392,7 +539,7 @@ class AuthController extends Controller
             $this->emitter->emit('userPassword.updated', [$user->username, $user->email]);
             return redirect();
         }
-        return redirect('/update_password');
+        return redirect('/update-password');
     }
 
     /**
