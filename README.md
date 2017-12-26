@@ -5,7 +5,7 @@
 ### What is this repository for? ###
 
 * Basic framework PHP7 with minimal resources for web development
-* Version 4.2.0 (old version Accessiwork ver.3.8.0)
+* Version 4.3.0 (old version Accessiwork ver.3.8.0)
 * Licence (LGPL-2.1 or GPL-3.0+)
 
 ### How do I get set up? ###

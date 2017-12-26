@@ -383,7 +383,7 @@ class AuthController extends Controller
             error('Vous ne pouvez pas accéder à cette page si vous êtes connecté');
             return redirect();
         }
-        if ($request->isPost()) {
+        if ($request->isPut()) {
             $posted = $this->getPost();
             $values = [
                 'password' => $posted['password'],
@@ -432,7 +432,7 @@ class AuthController extends Controller
         }
         $form = new FormBuilder(
             'reset_password_form',
-            'post',
+            'put',
             getUrl('reset-password-confirmation?id=' . $params['id'] . '&reset_token=' . $params['reset_token'])
         );
         $form->setCsrfInput($this->setToken())
@@ -453,7 +453,7 @@ class AuthController extends Controller
      */
     public function getProfilForm(UsersModel $user): FormBuilder
     {
-        $form = new FormBuilder('profilForm', 'post', getUrl('profil'));
+        $form = new FormBuilder('profilForm', 'put', getUrl('profil'));
         $form->setCsrfInput($this->setToken())
             ->setInput('text', 'nom', ['id' => 'nom', 'value' => $user->nom], 'Votre nom')
             ->setInput('text', 'prenom', ['id' => 'prenom', 'value' => $user->prenom], 'Votre prénom')
@@ -480,7 +480,7 @@ class AuthController extends Controller
             error('Vous devez être connecté pour accéder à la page de modification de mot de passe');
             return redirect();
         }
-        $form = new FormBuilder('updatePasswordForm', 'post', '');
+        $form = new FormBuilder('updatePasswordForm', 'put', '');
         $form->setCsrfInput($this->setToken())
             ->setInput('password', 'old_password', ['id' => 'old_password'], 'Ancien mot de passe')
             ->setInput('password', 'password', ['id' => 'password'], 'Nouveau mot de passe (entre 8 et 72 caractères)')

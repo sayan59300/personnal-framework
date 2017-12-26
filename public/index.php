@@ -98,14 +98,14 @@ if (AUTH) {
     $app->get('/confirmation', AuthController::class . ':confirmation');
     /* profil */
     $app->get('/profil', AuthController::class . ':profil');
-    $app->post('/profil', AuthController::class . ':updateProfil');
+    $app->put('/profil', AuthController::class . ':updateProfil');
     /* mise à jour du mot de passe */
     $app->get('/update-password', AuthController::class . ':updatePassword');
-    $app->post('/update-password', AuthController::class . ':passwordUpdate');
+    $app->put('/update-password', AuthController::class . ':passwordUpdate');
     $app->get('/reset-password', AuthController::class . ':vueResetPassword');
     $app->post('/reset-password', AuthController::class . ':sendResetPasswordEmail');
     $app->get('/reset-password-confirmation', AuthController::class. ':resetPasswordConfirmation');
-    $app->post('/reset-password-confirmation', AuthController::class. ':resetPasswordConfirmation');
+    $app->put('/reset-password-confirmation', AuthController::class. ':resetPasswordConfirmation');
     /* deconnexion */
     $app->get('/logout', AuthController::class . ':deconnexion');
     $app->post('/logout', AuthController::class . ':logout');

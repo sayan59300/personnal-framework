@@ -49,7 +49,18 @@ class FormBuilder extends Html
     public function __construct($name, $method, $action)
     {
         $this->name = $name;
-        $this->method = $method;
+        if ($method === 'put') {
+            $this->method = 'post';
+            $this->setMethodInput('PUT');
+        } elseif ($method === 'patch') {
+            $this->method = 'post';
+            $this->setMethodInput('PATCH');
+        } elseif ($method === 'delete') {
+            $this->method = 'post';
+            $this->setMethodInput('DELETE');
+        } else {
+            $this->method = $method;
+        }
         $this->action = $action;
     }
 
@@ -62,8 +73,7 @@ class FormBuilder extends Html
     public function setCsrfInput(string $csrfToken): self
     {
         $csrf = '<div>'
-            . '<input type="hidden" '
-            . 'name="csrf_token" value="' . $csrfToken . '"/>'
+            . '<input type="hidden" name="csrf_token" value="' . $csrfToken . '"/>'
             . '</div>';
         $this->elements['token_csrf'] = $csrf;
         return $this;
@@ -198,5 +208,15 @@ class FormBuilder extends Html
     private function getClassAttributes(array $attributes, string $defaut = null): string
     {
         return $classes = $attributes['class'] ?? $defaut ?? '';
+    }
+
+    /**
+     * Ajoute l'input avec la méthode demandée (PUT, PATCH, DELETE)
+     *
+     * @param string $method
+     */
+    private function setMethodInput(string $method): void
+    {
+        $this->elements['_method'] = '<input type="hidden" name="_METHOD" value="' . $method . '"/>';
     }
 }

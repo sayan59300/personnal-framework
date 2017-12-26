@@ -19,6 +19,45 @@ class FormBuilderTest extends TestCase
     }
 
     /**
+     * Construction POST
+     */
+    public function testConstructWithPost()
+    {
+        $builder = new FormBuilder('form', 'post', 'http://localhost.dev');
+        $this->assertArrayNotHasKey('_method', $builder->elements);
+    }
+
+    /**
+     * Construction PUT
+     */
+    public function testConstructWithPut()
+    {
+        $builder = new FormBuilder('form', 'put', 'http://localhost.dev');
+        $this->assertEquals('post', $builder->method);
+        $this->assertEquals('<input type="hidden" name="_METHOD" value="PUT"/>', $builder->elements['_method']);
+    }
+
+    /**
+     * Construction PATCH
+     */
+    public function testConstructWithPatch()
+    {
+        $builder = new FormBuilder('form', 'patch', 'http://localhost.dev');
+        $this->assertEquals('post', $builder->method);
+        $this->assertEquals('<input type="hidden" name="_METHOD" value="PATCH"/>', $builder->elements['_method']);
+    }
+
+    /**
+     * Construction DELETE
+     */
+    public function testConstructWithDelete()
+    {
+        $builder = new FormBuilder('form', 'delete', 'http://localhost.dev');
+        $this->assertEquals('post', $builder->method);
+        $this->assertEquals('<input type="hidden" name="_METHOD" value="DELETE"/>', $builder->elements['_method']);
+    }
+
+    /**
      * Fonction setCsrfInput
      */
     public function testGetCsrfToken()
