@@ -1,18 +1,12 @@
-<?php
-
-if (VERSION === 'dev') {
-    echo '<script src="/resources/js/jquery.js"></script>';
-    echo '<script src="/resources/js/bootstrap.min.js"></script>';
-    echo '<script src="/resources/js/bootstrap-toggle.min.js"></script>';
-} else {
-    echo '<script
-              src="https://code.jquery.com/jquery-3.2.1.min.js"
-              integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-              crossorigin="anonymous">
-          </script>';
-    echo '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>';
-    echo '<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>';
-}
-echo '<script src="/resources/js/ckeditor/ckeditor.js"></script>';
-echo '<script src="/resources/js/connexion.js"></script>';
-echo printJsAssets($scripts ?? '');
+<?php if (VERSION === 'dev') { ?>
+<script src="/resources/js/jquery.js"></script>
+<script src="/resources/js/bootstrap.min.js"></script>
+<script src="/resources/js/bootstrap-toggle.min.js"></script>
+<?php } else { ?>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<?php } ?>
+<script src="/resources/js/ckeditor/ckeditor.js"></script>
+<script src="/resources/js/connexion.js"></script>
+<?= printJsAssets($scripts ?? '');

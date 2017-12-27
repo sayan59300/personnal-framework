@@ -1,17 +1,12 @@
-<?php
-
-if (VERSION === 'dev') {
-    echo '<link rel="stylesheet" href="/resources/css/bootstrap.min.css" type="text/css"/>';
-    echo '<link rel="stylesheet" href="/resources/css/bootstrap-theme.min.css" type="text/css"/>';
-    echo '<link rel="stylesheet" href="/resources/css/bootstrap-toggle.min.css" type="text/css"/>';
-} else {
-    echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>';
-    echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" type="text/css" 
-    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>';
-    echo '<link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" type="text/css"/>';
-}
-
-echo '<link rel="stylesheet" href="/resources/css/style.css" type="text/css"/>';
-echo '<link rel="icon" href="/resources/images/icone.png">';
-echo printCssAssets($styles ?? '');
+<?php if (VERSION === 'dev') { ?>
+<link rel="stylesheet" href="/resources/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/resources/css/bootstrap-theme.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/resources/css/bootstrap-toggle.min.css" type="text/css"/>
+<?php } else { ?>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" type="text/css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" type="text/css"/>
+<?php } ?>
+    <link rel="stylesheet" href="/resources/css/style.css" type="text/css"/>
+    <link rel="icon" href="/resources/images/icone.png">
+<?= printCssAssets($styles ?? '');
