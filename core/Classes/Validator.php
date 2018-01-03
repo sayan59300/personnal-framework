@@ -63,7 +63,9 @@ class Validator
                 return false;
             }
         }
-        if (filter_var($this->values[$key], FILTER_VALIDATE_EMAIL) === false) {
+        $split = explode('@', $this->values[$key]);
+        $domain = end($split);
+        if (!filter_var($this->values[$key], FILTER_VALIDATE_EMAIL) || !checkdnsrr($domain, 'MX')) {
             $this->errors[$key] = $this->invalidValue();
             return false;
         }

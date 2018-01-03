@@ -43,14 +43,23 @@ class ValidatorTest extends TestCase
 
     public function testIsValidEmailWithInvalidEmail()
     {
-        $validator = new Validator(['email' => 'testtest.fr', 'email2' => 'test@testfr', 'email3' => '@test.fr']);
+        $validator = new Validator([
+            'email' => 'testtest.fr',
+            'email2' => 'test@testfr',
+            'email3' => '@test.fr',
+            'email4' => 'baltazar@test.fr',
+            'email5' => 'baltazar@gmail.con']);
         $validator->isValidEmail('email');
         $validator->isValidEmail('email2');
         $validator->isValidEmail('email3');
-        $this->assertEquals(3, $validator->getErrors());
+        $validator->isValidEmail('email4');
+        $validator->isValidEmail('email5');
+        $this->assertEquals(5, $validator->getErrors());
         $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email']);
         $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email2']);
         $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email3']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email4']);
+        $this->assertEquals(' * La valeur entrée n\'est pas valide', $_SESSION['validator_error_email5']);
     }
 
     public function testIsValidEmailWithRequiredAndEmptyValue()
