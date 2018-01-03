@@ -56,57 +56,56 @@ class AuthController extends Controller
             $this->emitter->emit('token.rejected');
             error('Token invalide');
             return redirect();
-        } else {
-            $username = $posted['username'];
-            $password = $posted['password'];
-            $user = new UsersModel;
-            /** @var UsersModel $result */
-            $result = current($user->find(
-                ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at', 'password', 'reset_password_token'],
-                    'conditions' => "username = :username"],
-                [':username' => $username]
-            ));
-            if (!$result || password_verify($password, $result->password) === false) {
-                Session::delete('auth');
-                error('Connexion impossible, mauvais nom d\'utilisateur ou mauvais mot de passe');
-                return redirect('/auth');
-            }
-            if ($result->confirmed !== '1') {
-                LoggerFactory::getInstance('security')->addWarning(
-                    'Tentative de connexion avec un compte non validé',
-                    ['username' => $result->username, 'email' => $result->email]
-                );
-                error(
-                    'Votre compte n\'a pas encore été validé, un email a été envoyé lors de votre inscription avec un lien de 
-                    confirmation, vous ne pourrez pas vous connecter avant d\'avoir terminé la procédure de validation, en cas 
-                    d\'impossibilité de valider votre compte veuillez contacter l\'administrateur du site'
-                );
-                return redirect();
-            }
-            if (!is_null($result->reset_password_token)) {
-                LoggerFactory::getInstance('security')->addWarning(
-                    'Tentative de connexion à un compte qui a une procédure de réinitialisation en cours',
-                    ['username' => $result->username, 'email' => $result->email]
-                );
-                error(
-                    'Une procédure de réinitialisation de mot de passe est en cours, votre compte a été bloqué '
-                    . 'le temps que finalisiez la procédure, en cas de problème réitérez l\'opération ou contactez '
-                    . 'l\'administrateur du site'
-                );
-                return redirect();
-            }
-            Session::set('auth', new \stdClass());
-            Session::add('auth', 'statut', 1);
-            Session::add('auth', 'id', $result->id);
-            Session::add('auth', 'username', $result->username);
-            Session::add('auth', 'nom', $result->nom);
-            Session::add('auth', 'prenom', $result->prenom);
-            Session::add('auth', 'confirmed', $result->confirmed);
-            Session::add('auth', 'registered_at', date_create($result->registered_at));
-            LoggerFactory::getInstance('security')->addInfo('Connexion utilisateur', ['username' => $result->username]);
-            Session::delete('erreur_login');
+        }
+        $username = $posted['username'];
+        $password = $posted['password'];
+        $user = new UsersModel;
+        /** @var UsersModel $result */
+        $result = current($user->find(
+            ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at', 'password', 'reset_password_token'],
+                'conditions' => "username = :username"],
+            [':username' => $username]
+        ));
+        if (!$result || password_verify($password, $result->password) === false) {
+            Session::delete('auth');
+            error('Connexion impossible, mauvais nom d\'utilisateur ou mauvais mot de passe');
+            return redirect('/auth');
+        }
+        if ($result->confirmed !== '1') {
+            LoggerFactory::getInstance('security')->addWarning(
+                'Tentative de connexion avec un compte non validé',
+                ['username' => $result->username, 'email' => $result->email]
+            );
+            error(
+                'Votre compte n\'a pas encore été validé, un email a été envoyé lors de votre inscription avec un lien de 
+                confirmation, vous ne pourrez pas vous connecter avant d\'avoir terminé la procédure de validation, en cas 
+                d\'impossibilité de valider votre compte veuillez contacter l\'administrateur du site'
+            );
             return redirect();
         }
+        if (!is_null($result->reset_password_token)) {
+            LoggerFactory::getInstance('security')->addWarning(
+                'Tentative de connexion à un compte qui a une procédure de réinitialisation en cours',
+                ['username' => $result->username, 'email' => $result->email]
+            );
+            error(
+                'Une procédure de réinitialisation de mot de passe est en cours, votre compte a été bloqué '
+                . 'le temps que finalisiez la procédure, en cas de problème réitérez l\'opération ou contactez '
+                . 'l\'administrateur du site'
+            );
+            return redirect();
+        }
+        Session::set('auth', new \stdClass());
+        Session::add('auth', 'statut', 1);
+        Session::add('auth', 'id', $result->id);
+        Session::add('auth', 'username', $result->username);
+        Session::add('auth', 'nom', $result->nom);
+        Session::add('auth', 'prenom', $result->prenom);
+        Session::add('auth', 'confirmed', $result->confirmed);
+        Session::add('auth', 'registered_at', date_create($result->registered_at));
+        LoggerFactory::getInstance('security')->addInfo('Connexion utilisateur', ['username' => $result->username]);
+        Session::delete('erreur_login');
+        return redirect();
     }
 
     /**
