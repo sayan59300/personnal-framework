@@ -6,4 +6,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ / [QSA,L]
 # Actice le forcing du SSL, n'activer que si la constante SSL est a true
 #RewriteCond %{SERVER_PORT} 80
-#RewriteRule ^(.*)$ https://itval.fr/$1 [R,L]
+#RewriteRule ^(.*)$ https://domain.com/$1 [R,L]
