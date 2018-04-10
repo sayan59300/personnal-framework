@@ -102,14 +102,14 @@ class Validator
      * Contrôle la validité d'un string en fonction du regex en arguments et sa confirmation si nécessaire
      *
      * @param string $key
-     * @param string $regex
+     * @param string|null $regex
      * @param bool $required
      * @param string|null $confirmation
      * @param int|null $minSize
      * @param int|null $maxSize
      * @return bool
      */
-    public function isValidString(string $key, string $regex, bool $required = false, string $confirmation = null, int $minSize = null, int $maxSize = null)
+    public function isValidString(string $key, string $regex = null, bool $required = false, string $confirmation = null, int $minSize = null, int $maxSize = null)
     {
         if ($required) {
             if ($this->required($key) === false) {
@@ -128,9 +128,11 @@ class Validator
                 return false;
             }
         }
-        if (filter_var($this->values[$key], FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => $regex]]) === false) {
-            $this->errors[$key] = $this->invalidValue();
-            return false;
+        if (!is_null($regex)) {
+            if (filter_var($this->values[$key], FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => $regex]]) === false) {
+                $this->errors[$key] = $this->invalidValue();
+                return false;
+            }
         }
         if (!is_null($confirmation)) {
             if ($this->values[$key] !== $this->values[$confirmation]) {
