@@ -75,10 +75,10 @@ class BaseController extends Controller
             'message_contact' => $posted['message_contact']
         ];
         $validator = new Validator($values);
-        $validator->isValidString('nom_contact', ALPHABETIC, true);
-        $validator->isValidString('prenom_contact', ALPHABETIC, true);
+        $validator->isValidString('nom_contact', DENOMINATION, true);
+        $validator->isValidString('prenom_contact', DENOMINATION, true);
         $validator->isValidEmail('email_contact', true);
-        $validator->isValidString('objet_contact', TEXT, true);
+        $validator->required('objet_contact');
         $validator->required('message_contact');
         if ($validator->getErrors() === 0) {
             $this->resetValuesSession($values);
