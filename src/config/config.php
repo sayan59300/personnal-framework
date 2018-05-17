@@ -14,6 +14,7 @@ define('SITE_CONTACT_MAIL', '');
 define('SITE_NAME', '');
 define('TITLE', '');
 define('VERSION', 'dev');
+define('SSL', false);
 
 /* SwiftMailer */
 define('HOST_MAIL', '');

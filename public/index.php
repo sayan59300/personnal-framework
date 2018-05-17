@@ -12,12 +12,6 @@ if (version_compare(PHP_VERSION, "7.1") === -1) {
 }
 
 session_start();
-define('SSL', false);
-if (SSL) {
-    define('BASE_URL', 'https://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
-} else {
-    define('BASE_URL', 'http://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
-}
 define('PUBLIC_ROOT', dirname(__FILE__));
 define('ROOT', dirname(PUBLIC_ROOT));
 define('DS', DIRECTORY_SEPARATOR);
@@ -30,6 +24,13 @@ require_once ROOT . DS . 'vendor' . DS . 'autoload.php';
 
 /* configuration */
 autoLoader(ROOT . DS . 'src' . DS . 'config' . DS);
+
+/* génération des liens avec ou sans ssl */
+if (SSL) {
+    define('BASE_URL', 'https://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
+} else {
+    define('BASE_URL', 'http://' . filter_input(INPUT_SERVER, 'HTTP_HOST'));
+}
 
 /* helpers */
 autoLoader(ROOT . DS . 'core' . DS . 'helpers' . DS);
