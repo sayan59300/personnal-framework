@@ -71,6 +71,10 @@ if (VERSION === 'dev') {
 /* initialisation de l'application */
 $app = new App($container);
 
+/* désactive les erreurs slim */
+unset($app->getContainer()['errorHandler']);
+unset($app->getContainer()['phpErrorHandler']);
+
 /* middleware pour whoops */
 $app->add(new WhoopsMiddleware);
 
