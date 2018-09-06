@@ -65,7 +65,7 @@ if (VERSION === 'dev') {
     $settings['debug'] = true;
     // Support click to open editor
     $settings['whoops.editor'] = 'sublime';
-    // Display call stack in orignal slim error when debug is off
+    // Display call stack in original slim error when debug is off
     $settings['displayErrorDetails'] = true;
 }
 
