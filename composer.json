@@ -1,7 +1,7 @@
 {
     "name": "itval/framework",
     "description": "ITVAL Framework",
-    "version": "4.3.1",
+    "version": "4.3.2",
     "license": "(LGPL-2.1 or GPL-3.0+)",
     "authors": [
         {
@@ -29,6 +29,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^6.1",
-        "squizlabs/php_codesniffer": "3.*"
+        "squizlabs/php_codesniffer": "3.*",
+        "symfony/var-dumper": "^4.2"
     }
 }
