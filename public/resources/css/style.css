@@ -135,6 +135,14 @@ Surcharge de bootstrap pour une meilleure responsivité de la navbar avec le
 formulaire de connexion à droite
 */
 @media (max-width: 1010px) {
+  h1, h2, h3, h4{
+    font-size: 200%;
+  }
+
+  p, nav, .navbar-brand, .pied, .corps{
+    font-size: 150%;
+  }
+  
   .navbar-header {
     float: none;
   }
