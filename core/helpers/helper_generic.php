@@ -1,11 +1,12 @@
 <?php
+
 /* * ************** * */
 /* * HELPER GENERIC * */
 /* * ************** * */
 
 use Itval\core\Classes\Session;
 use Pagerfanta\Pagerfanta;
-use Pagerfanta\View\TwitterBootstrap3View;
+use Pagerfanta\View\TwitterBootstrap4View;
 use Slim\Http\Response;
 
 /**
@@ -103,11 +104,11 @@ function printDate(DateTime $date): string
 function isActiveLink(string $url = null): string
 {
     if ($url === null) {
-        return (filter_input(INPUT_SERVER, 'REQUEST_URI') === '/') ? ' class="active"' : '';
+        return (filter_input(INPUT_SERVER, 'REQUEST_URI') === '/') ? ' active' : '';
     }
     $urlParts = explode('?', filter_input(INPUT_SERVER, 'REQUEST_URI'));
     $requestUrl = rtrim($urlParts[0], '/');
-    return (BASE_URL . $requestUrl === $url) ? ' class="active"' : '';
+    return (BASE_URL . $requestUrl === $url) ? ' active' : '';
 }
 
 /**
@@ -155,8 +156,8 @@ function printJsAssets($scripts): string
  */
 function getPaginationView(Pagerfanta $results, string $route): string
 {
-    $view = new TwitterBootstrap3View();
+    $view = new TwitterBootstrap4View();
     return $view->render($results, function (int $page) use ($route) {
-        return getUrl($route) . "?p=$page";
+            return getUrl($route) . "?p=$page";
     });
 }

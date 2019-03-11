@@ -138,7 +138,7 @@ class UsersModel extends Tables
     {
         return $this->add(
             [
-                'fields' =>
+                    'fields' =>
                     [
                         'nom',
                         'prenom',
@@ -151,19 +151,19 @@ class UsersModel extends Tables
                         'reset_password_token',
                         'reseted_at'
                     ]
-            ],
+                ],
             [
-                'nom' => $this->nom,
-                'prenom' => $this->prenom,
-                'email' => $this->email,
-                'username' => $this->username,
-                'password' => $this->password,
-                'confirmation_token' => $this->confirmation_token,
-                'confirmed' => $this->confirmed,
-                'registered_at' => $this->registered_at,
-                'reset_password_token' => null,
-                'reseted_at' => null
-            ]
+                    'nom' => $this->nom,
+                    'prenom' => $this->prenom,
+                    'email' => $this->email,
+                    'username' => $this->username,
+                    'password' => $this->password,
+                    'confirmation_token' => $this->confirmation_token,
+                    'confirmed' => $this->confirmed,
+                    'registered_at' => $this->registered_at,
+                    'reset_password_token' => null,
+                    'reseted_at' => null
+                ]
         );
     }
 
@@ -176,7 +176,7 @@ class UsersModel extends Tables
     {
         return $this->amend(
             [
-                'fields' =>
+                    'fields' =>
                     [
                         "nom = :nom",
                         "prenom = :prenom",
@@ -185,16 +185,16 @@ class UsersModel extends Tables
                         "confirmation_token = :confirmation_token",
                         "confirmed = :confirmed"
                     ],
-                'conditions' => 'id = ' . $this->id
-            ],
+                    'conditions' => 'id = ' . $this->id
+                ],
             [
-                'nom' => $this->nom,
-                'prenom' => $this->prenom,
-                'email' => $this->email,
-                'username' => $this->username,
-                'confirmation_token' => $this->confirmation_token,
-                'confirmed' => $this->confirmed,
-            ]
+                    'nom' => $this->nom,
+                    'prenom' => $this->prenom,
+                    'email' => $this->email,
+                    'username' => $this->username,
+                    'confirmation_token' => $this->confirmation_token,
+                    'confirmed' => $this->confirmed,
+                ]
         );
     }
 
@@ -207,12 +207,12 @@ class UsersModel extends Tables
     {
         $args = [
             'fields' =>
-                [
-                    "nom = :nom",
-                    "prenom = :prenom",
-                    "email = :email",
-                    "username = :username"
-                ],
+            [
+                "nom = :nom",
+                "prenom = :prenom",
+                "email = :email",
+                "username = :username"
+            ],
             'conditions' => 'id = ' . $this->id
         ];
         $values = [
@@ -233,9 +233,9 @@ class UsersModel extends Tables
     {
         $args = [
             'fields' =>
-                [
-                    "password = :password"
-                ],
+            [
+                "password = :password"
+            ],
             'conditions' => 'id = ' . $this->id
         ];
         $values = [
@@ -253,10 +253,10 @@ class UsersModel extends Tables
     {
         $values = [
             'fields' =>
-                [
-                    "confirmation_token = NULL",
-                    "confirmed = '1'"
-                ],
+            [
+                "confirmation_token = NULL",
+                "confirmed = '1'"
+            ],
             'conditions' => 'id = ' . $this->id
         ];
         return $this->amend($values);
@@ -271,10 +271,10 @@ class UsersModel extends Tables
     {
         $values = [
             'fields' =>
-                [
-                    "reset_password_token = '{$this->reset_password_token}'",
-                    "reseted_at = '{$this->reseted_at}'"
-                ],
+            [
+                "reset_password_token = '{$this->reset_password_token}'",
+                "reseted_at = '{$this->reseted_at}'"
+            ],
             'conditions' => 'id = ' . $this->id
         ];
         return $this->amend($values);
@@ -289,10 +289,10 @@ class UsersModel extends Tables
     {
         $values = [
             'fields' =>
-                [
-                    "password = '{$this->password}'",
-                    "reset_password_token = NULL",
-                ],
+            [
+                "password = '{$this->password}'",
+                "reset_password_token = NULL",
+            ],
             'conditions' => 'id = ' . $this->id
         ];
         return $this->amend($values);

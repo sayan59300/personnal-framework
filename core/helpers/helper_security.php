@@ -1,4 +1,5 @@
 <?php
+
 /* * *************** * */
 /* * HELPER SECURITY * */
 /* * *************** * */
@@ -87,8 +88,7 @@ function isCurrentUser(string $id): bool
  */
 function isValidToken(string $limit = '15 minutes'): bool
 {
-    if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token'))
-        && Session::read('time') >= strtotime("- $limit")) {
+    if ((filter_input(INPUT_POST, 'csrf_token') === Session::read('csrf_token')) && Session::read('time') >= strtotime("- $limit")) {
         return true;
     }
     return false;

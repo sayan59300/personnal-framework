@@ -13,6 +13,7 @@ use Throwable;
  */
 class PaginatedException extends Exception
 {
+
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {
         $this->message = 'Une erreur est survenue lors de la requête paginée';

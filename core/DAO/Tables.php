@@ -231,15 +231,13 @@ class Tables implements \ArrayAccess
         if (!isset($args['order'])) {
             $args['order'] = '';
         }
-        $requete =
-            'SELECT ' . $args['formattedFields']
+        $requete = 'SELECT ' . $args['formattedFields']
             . ' FROM ' . $args['tables']
             . $args['join']
             . $args['conditions']
             . $args['group']
             . $args['order'];
-        $countRequete =
-            'SELECT COUNT(id)'
+        $countRequete = 'SELECT COUNT(id)'
             . ' FROM ' . $args['tables']
             . $args['join']
             . $args['conditions'];
@@ -252,8 +250,8 @@ class Tables implements \ArrayAccess
         $page = $params['p'] ?? 1;
         try {
             return (new Pagerfanta($adapter))
-                ->setMaxPerPage($perPage)
-                ->setCurrentPage($page);
+                    ->setMaxPerPage($perPage)
+                    ->setCurrentPage($page);
         } catch (PaginatedException $e) {
             if (VERSION === 'dev') {
                 throw $e;
@@ -334,8 +332,7 @@ class Tables implements \ArrayAccess
     {
         if ($type === 'select') {
             $formattedArgs = $this->formatArgs($args);
-            $requete =
-                'SELECT ' . ($formattedArgs['fields'])
+            $requete = 'SELECT ' . ($formattedArgs['fields'])
                 . ' FROM ' . $formattedArgs['tables']
                 . $formattedArgs['join']
                 . $formattedArgs['conditions']
@@ -346,8 +343,7 @@ class Tables implements \ArrayAccess
         }
         if ($type === 'last' || $type === 'first') {
             $order = ($type === 'last') ? ' ORDER BY id DESC' : ' ORDER BY id ASC';
-            $requete =
-                'SELECT *'
+            $requete = 'SELECT *'
                 . ' FROM ' . $this->getTable()
                 . $order
                 . ' LIMIT ' . $limit;

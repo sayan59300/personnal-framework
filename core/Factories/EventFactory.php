@@ -12,6 +12,7 @@ use Evenement\EventEmitter;
  */
 class EventFactory
 {
+
     private static $_instance;
 
     private function __construct()

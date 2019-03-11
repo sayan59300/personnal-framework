@@ -4,8 +4,6 @@ namespace Itval\core\Classes;
 
 use Itval\core\DAO\Exception\QueryException;
 use Itval\core\DAO\Tables;
-use Itval\core\Factories\LoggerFactory;
-use Itval\src\Models\UsersModel;
 
 /**
  * Class Validator Classe contenant les fonctions de validations

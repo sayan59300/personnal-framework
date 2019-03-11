@@ -96,21 +96,21 @@ class FormBuilder extends Html
             unset($attributesArgs['class']);
         }
         if (Session::read('validator_error_' . $name)) {
-            $errorClass = ' has-error';
+            $errorClass = ' is-invalid';
         } else {
             $errorClass = '';
         }
         $attributes = self::formatAttributes($attributesArgs);
         if ($type === 'file') {
-            $input = '<div class="form-group' . $errorClass . '">' . $label . '<input type="file" '
-                . 'class="input-file' . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
-                . '<span style="color: #a94442;">' . Session::read('validator_error_' . $name) . '</span></div>';
+            $input = '<div class="form-group">' . $label . '<input type="file" '
+                . 'class="input-file' . $errorClass . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
+                . '<div class="invalid-feedback">' . Session::read('validator_error_' . $name) . '</div></div>';
         } elseif ($type === 'hidden') {
             $input = '<input type="' . $type . '" name="' . $name . '" ' . $attributes . '/>';
         } else {
-            $input = '<div class="form-group' . $errorClass . '">' . $label . '<input type="' . $type . '" '
-                . 'class="form-control' . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
-                . '<span style="color: #a94442;">' . Session::read('validator_error_' . $name) . '</span></div>';
+            $input = '<div class="form-group">' . $label . '<input type="' . $type . '" '
+                . 'class="form-control' . $errorClass . ' ' . $classes . '" name="' . $name . '" ' . 'id="' . $name . '" ' . $attributes . '/>'
+                . '<div class="invalid-feedback">' . Session::read('validator_error_' . $name) . '</div></div>';
         }
         $this->elements[$name] = $input;
         return $this;
@@ -157,14 +157,14 @@ class FormBuilder extends Html
             unset($attributesArgs['class']);
         }
         if (Session::read('validator_error_' . $name)) {
-            $errorClass = ' has-error';
+            $errorClass = ' is-invalid';
         } else {
             $errorClass = '';
         }
         $attributes = self::formatAttributes($attributesArgs);
-        $textArea = '<div class="form-group' . $errorClass . '">' . $label . '<textarea rows="' . $rows . '" '
-            . 'class="form-control' . ' ' . $classes . '" name="' . $name . '" ' . $attributes . '>' . $content . '</textarea>'
-            . '<span style="color: #a94442;">' . Session::read('validator_error_' . $name) . '</span></div>';
+        $textArea = '<div class="form-group">' . $label . '<textarea rows="' . $rows . '" '
+            . 'class="form-control' . $errorClass . ' ' . $classes . '" name="' . $name . '" ' . $attributes . '>' . $content . '</textarea>'
+            . '<div class="invalid-feedback">' . Session::read('validator_error_' . $name) . '</div></div>';
         $this->elements[$name] = $textArea;
         return $this;
     }

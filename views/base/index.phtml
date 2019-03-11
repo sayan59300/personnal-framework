@@ -1,67 +1,76 @@
 <div class="row">
-    <div class="col-md-2">
-        <img src="/resources/images/logo.png" alt="ITVAL">
-        <h1>ITVAL Framework</h1>
-        <h3 style="text-align: left;">What is this repository for?</h3>
-        <p style="text-align: left;">Basic framework PHP 7.1 with minimal resources for web development</p>
-        <p style="text-align: left;">Version <?= $data['version']; ?></p>
-        <p style="text-align: left;">Licence <?= $data['license']; ?></p>
-    </div>
-    <div class="col-md-9 col-md-offset-1">
-        <h3>How do I get set up?</h3>
-        <ul>
-            <li>Installation</li>
-                <ol>
-                    <li>Download sources</li>
-                    <li>Copy the files in your working folder</li>
-                    <li>Execute on the command line : composer update</li>
-                    <li>Application index folder /public</li>
-                </ol>
-            <li>Configuration</li>
-                <ul>
-                    <li>Edit the config file : /src/config/config.php and add your site configuration</li>
-                    <li>For the production version : modify the version constant with "prod"</li>
-                </ul>
-            <li>Production dependencies</li>
-                <ul>
-                    <?php foreach ($data['require'] as $key => $value): ?>
-                    <li><?= $key; ?>: <?= $value; ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            <li>Development dependencies</li>
-                <ul>
-                    <?php foreach ($data['require-dev'] as $key => $value): ?>
-                    <li><?= $key; ?>: <?= $value; ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            <li>Database configuration</li>
-                <ul>
-                    <li>Edit the config file : /src/config/config.php and add your BDD configuration</li>
-                </ul>
-            <li>Swiftmailer configuration</li>
-                <ul>
-                    <li>Edit the config file : /src/config/config.php and add your configuration</li>
-                </ul>
-            <li>Routing</li>
-                <ul>
-                    <li>File : /public/index.php</li>
-                </ul>
-        </ul>
-        * example<br/>
-        <code>$app->get('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
-        <code>$app->post('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
-        <code>$app->put('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
-        <code>$app->patch('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
-        <code>$app->delete('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
-        <br/>
-        <p>* How to run tests : Command-line ./vendor/bin/phpunit</p>
-        <h3>Who do I talk to?</h3>
-        <ul>
-            <li>Repo owner or admin</li>
-            <ul>
-                <li>ITVAL Society &lt;contact@itval.fr&gt;</li>
-                <li>Nicolas BUFFART &lt;concepteur-developpeur@nicolas-buffart.fr&gt;</li>
-            </ul>
-        </ul>
-    </div>
+  <div class="col-lg-12">
+    <img src="/resources/images/logo.png" alt="ITVAL">
+    <h1>ITVAL Framework</h1>
+    <h3 style="text-align: left;">What is this repository for?</h3>
+    <p style="text-align: left;">Basic framework PHP 7.1 with minimal resources for web development</p>
+    <p style="text-align: left;">Version <?= $data['version']; ?></p>
+    <p style="text-align: left;">Licence <?= $data['license']; ?></p>
+    <h3>How do I get set up?</h3>
+    <ul>
+      <li>Installation</li>
+      <ol>
+        <li>Download sources</li>
+        <li>Copy the files in your working folder</li>
+        <li>Execute on the command line : composer update</li>
+        <li>Application index folder /public</li>
+      </ol>
+      <li>Configuration</li>
+      <ul>
+        <li>Edit the config file : /src/config/config.php and add your site configuration</li>
+        <li>For the production version : modify the version constant with "prod"</li>
+      </ul>
+      <li>Production dependencies</li>
+      <ul>
+        <?php foreach ($data['require'] as $key => $value): ?>
+            <li><?= $key; ?>: <?= $value; ?></li>
+        <?php endforeach; ?>
+      </ul>
+      <li>Development dependencies</li>
+      <ul>
+        <?php foreach ($data['require-dev'] as $key => $value): ?>
+            <li><?= $key; ?>: <?= $value; ?></li>
+        <?php endforeach; ?>
+      </ul>
+      <li>Assets</li>
+      <ul>
+        <li>Bootstrap v4.3</li>
+        <li>jQuery v3.3.1</li>
+        <li>CKEditor 4.7.2</li>
+      </ul>
+      <li>Database configuration</li>
+      <ul>
+        <li>Edit the config file : /src/config/config.php and add your BDD configuration</li>
+      </ul>
+      <li>Swiftmailer configuration</li>
+      <ul>
+        <li>Edit the config file : /src/config/config.php and add your configuration</li>
+      </ul>
+      <li>Routing</li>
+      <ul>
+        <li>File : /public/index.php</li>
+      </ul>
+      <li>Views</li>
+      <ul>
+        <li>/viens/lowercase(controller name without Controller)/viewname.phtml</li>
+        <li>CSS : Bootstrap v4.3</li>
+      </ul>
+    </ul>
+    * example<br/>
+    <code>$app->get('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
+    <code>$app->post('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
+    <code>$app->put('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
+    <code>$app->patch('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
+    <code>$app->delete('/route', Itval\Controllers\YourController::class . ':method');</code><br/>
+    <br/>
+    <p>* How to run tests : Command-line ./vendor/bin/phpunit</p>
+    <h3>Who do I talk to?</h3>
+    <ul>
+      <li>Repo owner or admin</li>
+      <ul>
+        <li>ITVAL Society &lt;contact@itval.fr&gt;</li>
+        <li>Nicolas BUFFART &lt;concepteur-developpeur@nicolas-buffart.fr&gt;</li>
+      </ul>
+    </ul>
+  </div>
 </div>
