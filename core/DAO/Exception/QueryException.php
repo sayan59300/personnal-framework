@@ -13,6 +13,7 @@ use Throwable;
  */
 class QueryException extends Exception
 {
+
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {
         $this->message = 'Une erreur est survenue lors de la création de la requête SQL';

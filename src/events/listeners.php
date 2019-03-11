@@ -28,9 +28,9 @@ $emitter->on(
         $mail = new Email('registration', ['username' => $user->username, 'confirmation_token' => $user->confirmation_token]);
         $message = new \Swift_Message('Email de confirmation suite à votre inscription sur le site ' . SITE_NAME);
         $message->setFrom(SITE_CONTACT_MAIL)
-            ->setTo($user->email)
-            ->setReplyTo(SITE_CONTACT_MAIL)
-            ->setBody($mail->getView(), 'text/html');
+        ->setTo($user->email)
+        ->setReplyTo(SITE_CONTACT_MAIL)
+        ->setBody($mail->getView(), 'text/html');
         if ($mail->send($message) === 0) {
             LoggerFactory::getInstance('contact')->addWarning(
                 'Erreur lors d\'une tentative d\'envoie de message après inscription d\'un nouvel utilisateur',
@@ -58,9 +58,9 @@ $emitter->on(
         $mail = new Email('update_password');
         $message = new \Swift_Message('Email de notification de modification de mot de passe sur le site ' . SITE_NAME);
         $message->setFrom(SITE_CONTACT_MAIL)
-            ->setTo($email)
-            ->setReplyTo(SITE_CONTACT_MAIL)
-            ->setBody($mail->getView(), 'text/html');
+        ->setTo($email)
+        ->setReplyTo(SITE_CONTACT_MAIL)
+        ->setBody($mail->getView(), 'text/html');
         if ($mail->send($message) === 0) {
             LoggerFactory::getInstance('contact')->addWarning(
                 'Erreur lors d\'une tentative d\'envoie de message après Modification de mot de passe',
@@ -88,9 +88,9 @@ $emitter->on(
         $mail = new Email('reset_password', ['id' => $user->id, 'reset_password_token' => $user->reset_password_token]);
         $message = new \Swift_Message('Email de réinitialisation de mot de passe suite à votre demande sur le site ' . SITE_NAME);
         $message->setFrom(SITE_CONTACT_MAIL)
-            ->setTo($user->email)
-            ->setReplyTo(SITE_CONTACT_MAIL)
-            ->setBody($mail->getView(), 'text/html');
+        ->setTo($user->email)
+        ->setReplyTo(SITE_CONTACT_MAIL)
+        ->setBody($mail->getView(), 'text/html');
         if ($mail->send($message) === 0) {
             LoggerFactory::getInstance('contact')->addWarning(
                 'Erreur lors d\'une tentative d\'envoie de message après demande de réinitialisation de mot de passe',
@@ -118,8 +118,8 @@ $emitter->on(
         $mail = new Email('contact', $values);
         $message = new \Swift_Message('Contact - ' . SITE_NAME);
         $message->setFrom($values['email_contact'])
-            ->setTo(SITE_CONTACT_MAIL)
-            ->setBody($mail->getView(), 'text/html');
+        ->setTo(SITE_CONTACT_MAIL)
+        ->setBody($mail->getView(), 'text/html');
         if ($mail->send($message) === 0) {
             LoggerFactory::getInstance('contact')->addAlert(
                 'Erreur lors de l\'envoie d\'un message depuis la page de contact',

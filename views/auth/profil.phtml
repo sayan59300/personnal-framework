@@ -1,15 +1,15 @@
 <h1>Votre profil</h1>
 <hr>
 <div class="row">
-    <div class="col-md-6">
-        <form name="<?= $profilForm->name; ?>" method="<?= $profilForm->method; ?>"
-              action="<?= $profilForm->action; ?>">
+  <div class="col-lg-12">
+    <form name="<?= $profilForm->name; ?>" method="<?= $profilForm->method; ?>"
+          action="<?= $profilForm->action; ?>">
             <?php foreach ($profilForm->elements as $element): ?>
                 <?= $element; ?>
             <?php endforeach; ?>
-            <label>Date d'enregistrement</label>
-            <pre class="center"><?= 'Enregistré le ' . printDate($registerAt) ?? ''; ?></pre>
-            <a href="<?= getUrl('update-password'); ?>" class="btn btn-danger">Modifier le mot de passe</a>
-        </form>
-    </div>
+      <label>Date d'enregistrement</label>
+      <pre class="center"><?= 'Enregistré le ' . printDate($registerAt) ?? ''; ?></pre>
+      <a href="<?= getUrl('update-password'); ?>" class="btn btn-danger">Modifier le mot de passe</a>
+    </form>
+  </div>
 </div>

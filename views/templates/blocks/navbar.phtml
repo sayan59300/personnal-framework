@@ -1,37 +1,18 @@
-<div class="row">
-    <div class="col-md-12">
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <span class="navbar-brand">
-                        <img alt="Brand" src="/resources/images/icone.png">
-                    </span>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <div class="navbar-brand"><?= TITLE; ?></div>
-                </div>
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li<?= isActiveLink(); ?>>
-                            <a href="<?= BASE_URL; ?>" title="Accueil du site <?= SITE_NAME; ?>">
-                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Accueil
-                            </a>
-                        </li>
-                        <li><a href="#" title="">Lien</a></li>
-                        <li><a href="#" title="">Lien</a></li>
-                        <li><a href="#" title="">Lien</a></li>
-                        <li<?= isActiveLink(getUrl('contact')); ?>>
-                            <a href="<?= getUrl('contact'); ?>" title="Page de contact">
-                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light">
+  <a class="navbar-brand" href="<?= BASE_URL; ?>">
+    <img src="/resources/images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="ITVAL"> <?= TITLE; ?>
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link" href="#">Link</a>
+      <a class="nav-item nav-link" href="#">Link</a>
+      <a class="nav-item nav-link" href="#">Link</a>
+      <a class="nav-item nav-link<?= isActiveLink(getUrl('contact')); ?>" href="<?= getUrl('contact'); ?>" title="Page de contact">
+        Contact
+      </a>
     </div>
-</div>
+  </div>
+</nav>

@@ -63,7 +63,7 @@ class AuthController extends Controller
         /** @var UsersModel $result */
         $result = current($user->find(
             ['fields' => ['id', 'username', 'nom', 'prenom', 'email', 'confirmed', 'registered_at', 'password', 'reset_password_token'],
-                'conditions' => "username = :username"],
+                    'conditions' => "username = :username"],
             [':username' => $username]
         ));
         if (!$result || password_verify($password, $result->password) === false) {

@@ -10,8 +10,8 @@
 
 /* général */
 body { 
-  padding-top: 70px;
   font-family: 'Noto Sans', sans-serif;
+  margin-top: 70px;
 }
 
 p {
@@ -39,6 +39,7 @@ h1,h2,h3,h4 {
 
 /* connexion block flottant */
 .connexion {
+  margin-top: 80px;
   width: 280px;
   height: 200px;
   background-color: transparent;
@@ -101,8 +102,8 @@ h1,h2,h3,h4 {
 }
 
 .pied .parts-left {
-  text-align: justify;
-
+  text-align: center;
+  padding-top: 20px;
 }
 
 .pied .parts-left p {
@@ -110,6 +111,11 @@ h1,h2,h3,h4 {
 }
 
 .pied .parts-center {  
+  text-align: center;
+  padding-top: 20px;
+}
+
+.pied .visibilite {  
   text-align: center;
   padding-top: 20px;
 }
@@ -122,6 +128,7 @@ h1,h2,h3,h4 {
 .corps {
   text-align: justify;
   min-height: 100vh;
+  padding-top: 80px;
   padding-bottom: 20px;
 }
 
@@ -130,58 +137,13 @@ h1,h2,h3,h4 {
   margin-top: 100px;
 }
 
-/*
-Surcharge de bootstrap pour une meilleure responsivité de la navbar avec le
-formulaire de connexion à droite
-*/
+/* Responsivity */
 @media (max-width: 1010px) {
   h1, h2, h3, h4{
     font-size: 200%;
   }
 
-  p, nav, .navbar-brand, .pied, .corps{
+  p, .sidebar-right, .pied, .corps{
     font-size: 150%;
-  }
-  
-  .navbar-header {
-    float: none;
-  }
-  .navbar-toggle {
-    display: block;
-  }
-  .navbar-collapse {
-    border-top: 1px solid transparent;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-  .navbar-collapse.collapse {
-    display: none!important;
-  }
-  .navbar-nav {
-    float: none!important;
-    margin: 7.5px -15px;
-  }
-  .navbar-nav>li {
-    float: none;
-  }
-  .navbar-nav>li>a {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-  .navbar-text {
-    float: none;
-    margin: 15px 0;
-  }
-  /* since 3.1.0 */
-  .navbar-collapse.collapse.in { 
-    display: block!important;
-  }
-  .collapsing {
-    overflow: hidden!important;
-  }
-  .parts-right {
-    text-align: center;
-  }
-  .visibilite {
-    text-align: center;
   }
 }

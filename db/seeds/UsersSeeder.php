@@ -4,6 +4,7 @@ use Phinx\Seed\AbstractSeed;
 
 class UsersSeeder extends AbstractSeed
 {
+
     /**
      * Run Method.
      *

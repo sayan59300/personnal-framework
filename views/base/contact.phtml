@@ -1,29 +1,29 @@
 <div>
-    <h1>Formulaire de contact</h1>
-    <hr/>
-    <div class="row">
-        <div class="col-md-12">
-            <form name="<?= $contactForm->name; ?>" method="<?= $contactForm->method; ?>" action="<?= $contactForm->action; ?>">
-                <h4>Catégorie concernée par le message</h4>
-                <select class="form-control" name="categorie_contact">
-                    <option value="Défaut" <?= (printSession('categorie_contact') === 'Défaut') ? 'selected ' : ''; ?>>
-                        Sélectionnez une catégorie (facultatif)
-                    </option>
-                    <option value="Site" <?= (printSession('categorie_contact') === 'Site') ? 'selected ' : ''; ?>>
-                        Proposition commerciale
-                    </option>
-                    <option value="Information" <?= (printSession('categorie_contact') === 'Information') ? 'selected ' : ''; ?>>
-                        Demande d'information
-                    </option>
-                    <option value="Divers" <?= (printSession('categorie_contact') === 'Divers') ? 'selected ' : ''; ?>>
-                        Divers
-                    </option>
-                </select>
-                <br/>
-                <?php foreach ($contactForm->elements as $element): ?>
-                    <?= $element; ?>
-                <?php endforeach; ?>
-            </form>
-        </div>
+  <h1>Formulaire de contact</h1>
+  <hr/>
+  <div class="row">
+    <div class="col-lg-12">
+      <form name="<?= $contactForm->name; ?>" method="<?= $contactForm->method; ?>" action="<?= $contactForm->action; ?>">
+        <h4>Catégorie concernée par le message</h4>
+        <select class="form-control" name="categorie_contact">
+          <option value="Défaut" <?= (printSession('categorie_contact') === 'Défaut') ? 'selected ' : ''; ?>>
+            Sélectionnez une catégorie (facultatif)
+          </option>
+          <option value="Site" <?= (printSession('categorie_contact') === 'Site') ? 'selected ' : ''; ?>>
+            Proposition commerciale
+          </option>
+          <option value="Information" <?= (printSession('categorie_contact') === 'Information') ? 'selected ' : ''; ?>>
+            Demande d'information
+          </option>
+          <option value="Divers" <?= (printSession('categorie_contact') === 'Divers') ? 'selected ' : ''; ?>>
+            Divers
+          </option>
+        </select>
+        <br/>
+        <?php foreach ($contactForm->elements as $element): ?>
+            <?= $element; ?>
+        <?php endforeach; ?>
+      </form>
     </div>
+  </div>
 </div>

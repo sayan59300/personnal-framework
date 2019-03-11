@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html>
-<!-- Header -->
-<head>
+  <!-- Header -->
+  <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
     <?php require ROOT . DS . 'views' . DS . 'templates' . DS . 'blocks' . DS . 'head.phtml'; ?>
     <link href="https://fonts.googleapis.com/css?family=Faster+One|Noto+Sans|Quattrocento" rel="stylesheet">
     <title>Erreur HTTP/1.0 404</title>
-</head>
-<!-- Fin header -->
-<body>
-<div class="container-fluid">
-    <header>
+  </head>
+  <!-- Fin header -->
+  <body>
+    <div class="container-fluid">
+      <header>
         <!-- Navbar -->
         <?php require ROOT . DS . 'views' . DS . 'templates' . DS . 'blocks' . DS . 'navbar.phtml'; ?>
         <!-- Fin navbar -->
         <!-- Connexion -->
         <?php require ROOT . DS . 'views' . DS . 'templates' . DS . 'blocks' . DS . 'connexion.phtml'; ?>
         <!-- Fin connexion -->
-    </header>
-    <section>
-        <div class="row">
-            <!-- Corps de page -->
-            <div class="col-md-8 col-md-offset-2 corps">
-                <div class="alert alert-danger center _404">
-                    <h1>
-                        HTTP/1.0 403 Forbidden<br/>
-                        Accès refusé<br/>
-                    </h1>
-                </div>
+      </header>
+      <section>
+        <div class="row justify-content-md-center">
+          <!-- Corps de page -->
+          <div class="col-md-6 corps">
+            <div class="alert alert-danger center _404">
+              <h1>
+                HTTP/1.0 403 Forbidden<br/>
+                Accès refusé<br/>
+              </h1>
             </div>
-            <!-- Fin corps de page -->
+          </div>
+          <!-- Fin corps de page -->
         </div>
-    </section>
-    <footer>
+      </section>
+      <footer>
         <!-- Pied de page -->
         <?php require ROOT . DS . 'views' . DS . 'templates' . DS . 'blocks' . DS . 'footer.phtml'; ?>
         <!-- Fin pied de page -->
-    </footer>
-</div>
-<?php require ROOT . DS . 'views' . DS . 'templates' . DS . 'blocks' . DS . 'scripts.phtml'; ?>
-</body>
+      </footer>
+    </div>
+    <?php require ROOT . DS . 'views' . DS . 'templates' . DS . 'blocks' . DS . 'scripts.phtml'; ?>
+  </body>
 </html>

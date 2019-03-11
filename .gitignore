@@ -42,3 +42,5 @@ tmp/cache/
 
 ### Logs ###
 logs/
+/vendor/
+public/resources/images/footer/github_white.png

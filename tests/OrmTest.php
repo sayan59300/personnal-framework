@@ -74,7 +74,7 @@ class OrmTest extends TestCase
      */
     public function testSelectQueryWithFields()
     {
-        $requete = $this->model->getQuery('select', ['fields' => ['id','nom','description','contenu']]);
+        $requete = $this->model->getQuery('select', ['fields' => ['id', 'nom', 'description', 'contenu']]);
         $this->assertEquals('SELECT id,nom,description,contenu FROM tests', $requete);
     }
 
@@ -86,7 +86,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'conditions' => 'id = :id'
             ]
         );
@@ -101,7 +101,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'conditions' => 'id = :id',
                 'group' => 'nom'
             ]
@@ -117,7 +117,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'conditions' => 'id = :id',
                 'group' => 'nom',
                 'order' => 'nom DESC'
@@ -134,7 +134,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'conditions' => 'id = :id',
                 'group' => 'nom',
                 'order' => 'nom DESC',
@@ -144,7 +144,7 @@ class OrmTest extends TestCase
         $requete2 = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'conditions' => 'id = :id',
                 'group' => 'nom',
                 'order' => 'nom DESC',
@@ -163,7 +163,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['tests.id','tests.nom','tests.description','tests.contenu'],
+                'fields' => ['tests.id', 'tests.nom', 'tests.description', 'tests.contenu'],
                 'conditions' => 'tests.id = :id',
                 'group' => 'tests.nom',
                 'order' => 'tests.nom DESC',
@@ -174,7 +174,7 @@ class OrmTest extends TestCase
         $requete2 = $this->model->getQuery(
             'select',
             [
-                'fields' => ['tests.id','tests.nom','tests.description','tests.contenu'],
+                'fields' => ['tests.id', 'tests.nom', 'tests.description', 'tests.contenu'],
                 'conditions' => 'tests.id = :id AND users.id = :user_id AND coms.nom = :nom',
                 'group' => 'users.nom',
                 'order' => 'users.nom DESC',
@@ -194,7 +194,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'group' => 'nom',
             ]
         );
@@ -209,7 +209,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'order' => 'nom DESC'
             ]
         );
@@ -224,7 +224,7 @@ class OrmTest extends TestCase
         $requete = $this->model->getQuery(
             'select',
             [
-                'fields' => ['id','nom','description','contenu'],
+                'fields' => ['id', 'nom', 'description', 'contenu'],
                 'limit' => 3
             ]
         );

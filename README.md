@@ -5,7 +5,7 @@
 ### What is this repository for? ###
 
 * Basic framework PHP7 with minimal resources for web development
-* Version 4.3.2 (old version Accessiwork ver.3.8.0)
+* Version 5.0.0
 * Licence (LGPL-2.1 or GPL-3.0+)
 
 ### How do I get set up? ###
@@ -31,6 +31,10 @@
     - phpunit/phpunit: ^6.1
     - squizlabs/php_codesniffer: 3.*
     - symfony/var-dumper: ^4.2
+* Assets
+    - Bootstrap v4.3
+    - jQuery v3.3.1
+    - CKEditor 4.7.2
 * Database configuration
     - Edit the config file : /src/config/config.php and add your BDD configuration
 * Swiftmailer configuration
