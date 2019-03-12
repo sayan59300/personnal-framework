@@ -8,7 +8,7 @@
                 <?= $element; ?>
             <?php endforeach; ?>
       <label>Date d'enregistrement</label>
-      <pre class="center"><?= 'Enregistré le ' . printDate($registerAt) ?? ''; ?></pre>
+      <pre class="alert alert-dark" role="alert" style="width: 255px;"><?= 'Enregistré le ' . printDate($registerAt) ?? ''; ?></pre>
       <a href="<?= getUrl('update-password'); ?>" class="btn btn-danger">Modifier le mot de passe</a>
     </form>
   </div>
