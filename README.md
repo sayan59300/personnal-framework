@@ -55,4 +55,4 @@
 
 * Repo owner or admin
     - ITVAL Society <contact@itval.fr>
-    - Nicolas BUFFART <concepteur-developpeur@nicolas-buffart.fr>
+    - Nicolas BUFFART <nicolas.buffart@itval.fr>
